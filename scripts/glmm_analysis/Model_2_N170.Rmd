@@ -1,0 +1,183 @@
+---
+title: "Mixed Model N170"
+output:
+  html_document:
+    df_print: paged
+  word_document: default
+---
+
+
+# First load packages: 
+
+```{r}
+library(lme4)         # mixed model package
+library(lmerTest)     # library providing p-values for mixed models in lme4
+library(readxl)       # read excel
+library(ggplot2)      # graphics
+library(emmeans)      # library for post-hoc tests
+library(pbkrtest)     # needed for post-hoc tests in mixed models
+library(jtools)       # post hoc tests
+library(interactions) 
+library(dplyr)
+library(ggplot2)      # plot effects
+library(readxl)       # read files
+library(readr)        # save files
+library(afex)         # plot effects
+```
+
+
+# Load the dataset:
+
+Gender: 2=men, 1=women
+```{r}
+data <- read_excel("path/erp_N170_HC_and_MDD.xlsx")
+head(data)
+```
+
+
+```{r}
+plot(density(data$N170),main="Density estimate of data")
+```
+
+# Check for distribution type
+
+```{r}
+x <- data$N170+100
+den <- density(x)
+dat <- data.frame(x = den$x, y = den$y) 
+
+#Fit distributions
+library(fitdistrplus)
+fit.weibull <- fitdist(x, "weibull")
+fit.normal <- fitdist(x,"norm")
+fit.gamma <- fitdist(x, "gamma", lower = c(0, 0))
+
+# Compare fits graphically
+plot.legend <- c("Weibull", "Gamma","Normal")
+par(mfrow = c(2, 2)) #show 4 pictures
+denscomp(list(fit.weibull, fit.gamma, fit.normal), fitcol = c("red", "blue","green"), legendtext = plot.legend)
+qqcomp(list(fit.weibull, fit.gamma, fit.normal), fitcol = c("red", "blue","green"), legendtext = plot.legend)
+cdfcomp(list(fit.weibull, fit.gamma, fit.normal), fitcol = c("red", "blue","green"), legendtext = plot.legend)
+ppcomp(list(fit.weibull, fit.gamma, fit.normal), fitcol = c("red", "blue","green"), legendtext = plot.legend)
+
+
+```
+--> choose normal distribution from visual checking
+
+
+
+# Factorise variables
+
+```{r}
+data$mask[data$mask == "bewusst"] <- "conscious"
+data$mask[data$mask == "unbewusst"] <- "unconscious"
+data$name              <- factor(data$subName, ordered = FALSE)
+data$consciousness     <- factor(data$mask, ordered = FALSE)
+data$primer_emotion    <- factor(data$emotion, ordered = FALSE)
+data$group             <- factor(data$group, ordered = FALSE)
+data$gender            <- factor(data$Gender_f1_m2, ordered = FALSE)
+```
+
+
+# Check out models
+
+time -> primer consciousness 
+
+```{r}
+Model <- lmer(N170 ~ consciousness*primer_emotion*group 
+              + gender 
+              + age
+              + (1|name),
+              data=data)
+```
+
+
+```{r}
+sjPlot::tab_model(Model)
+```
+
+```{r}
+sjPlot::plot_model(Model, type = "diag")
+```
+
+
+```{r}
+anova<-anova(Model, type = 3, ddf= "Kenward-Roger")
+print(anova)
+```
+
+## Post Hoc tests
+
+
+```{r}
+eff.primer        <- emmeans(Model, pairwise ~ primer_emotion,adjust ="bonferroni")
+eff.gender        <- emmeans(Model, pairwise ~ gender)
+eff.consciousness <- emmeans(Model, pairwise ~ consciousness)
+eff.age           <- cor.test(data$N170,data$age, method="spearman")
+```
+```{r}
+eff.consciousness
+eff.primer
+eff.gender 
+eff.age 
+```
+
+
+
+# Plot effects
+
+```{r}
+primer <-  afex_plot(Model, x = "primer_emotion", 
+            id = "name", dodge = 0.8, 
+            data_geom = geom_violin, 
+            mapping = c("linetype", "fill"),
+            error_arg = list(width = 0.2),
+            legend_title = "primer emotion",
+            data_arg = list(width = 0.5)) + 
+    ggpubr::theme_pubr() + 
+    scale_fill_manual(values = c("happy" = "greenyellow", "neutral" = "lightblue", "sad"= "orange")) + 
+    theme(legend.position="none") +
+  labs(y = "N170", x = "primer emotion")
+
+  
+conscious<-  afex_plot(Model, x = "consciousness", 
+            id = "name", dodge = 0.8,
+            data_geom = geom_violin, 
+            mapping = "fill",
+            error_arg = list(width = 0.2),
+            data_arg = list(width = 0.5)) + ggpubr::theme_pubr() + 
+    scale_fill_manual(values = c("conscious" = "grey", "unconscious" = "white")) +
+    theme(legend.position="none") + 
+    labs(y = "N170", x = "")
+  
+gender<-    afex_plot(Model, x = "gender", #trace = "target_emotion", panel = "consciousness", 
+            id = "name", dodge = 0.8,
+            factor_levels = list(gender = c("female", "male")),
+            data_geom = geom_violin, 
+            mapping = "fill",
+            error_arg = list(width = 0.2),
+            legend_title = "",
+            data_arg = list(width = 0.5)) + ggpubr::theme_pubr() + 
+    scale_fill_manual(values = c("female" = "grey", "male" = "white")) +
+    theme(legend.position="none") + 
+    labs(y = "N170", x = "")
+
+age<- ggplot(data, aes(x = age, y = N170)) +
+  geom_point() +
+  geom_smooth(method = "lm") +
+  ggpubr::theme_pubr() +
+  labs(x = "age", y ="N170")
+```
+
+
+```{r}
+# Combine plots into a grid
+combined_plots <- cowplot::plot_grid(primer, conscious, gender, age,
+                            labels = c("A", "B", "C", "D"),
+                            ncol = 2,nrow = 2)
+
+# Display the combined plots
+print(combined_plots)
+ggsave("Path/GLMM_N170.tiff", combined_plots, width = 6, height = 7)
+```
+
