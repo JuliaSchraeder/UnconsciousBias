@@ -3,7 +3,7 @@
 ## Table of contents
 * [General info](#general-info)
 	* [Authors](#authors) 
-	* [Publication](#OSF Link) 
+	* [Publication](#OSF) 
 	* [License](#license)
 * [Experimental design](#experimental-design)
 * [Folder descripion](#folder-description)
@@ -23,7 +23,7 @@ Julia Schräder 1,2, Lennard Herzberg 1, Han-Gue Jo 3, Lucia Hernandez-Pena 1,2,
 * <sub><sup>3 School of Computer Information and Communication Engineering, Kunsan National University, Gun-san, Korea</sup></sub>
 
 
-#### OSF Link 
+#### OSF 
 
 [osf.io/mscz5](https://osf.io/bfrky)
 
