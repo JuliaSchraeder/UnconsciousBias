@@ -5,7 +5,7 @@
 
 %% Find FirstLevel Contrasts
 clear                                                                                               % clear Workspace
-Data_Path = fullfile('/bif/storage/storage1/projects/emocon/FirstLevel_Primer/BackwardMask/');          % set DataPath
+Data_Path = fullfile('');          % set DataPath
 
 
 % HC excluded participants: sub-005,sub-013, sub-016, sub-058, sub-063, sub-101, sub-105 (movement), sub-078 (checked 25.09.2023)
@@ -48,7 +48,7 @@ end
 
 
 %% Define Design
-matlabbatch{1}.spm.stats.factorial_design.dir = {'/bif/storage/storage1/projects/emocon/SecondLevel/FullFact/Primer_effect'};
+matlabbatch{1}.spm.stats.factorial_design.dir = {'Path/Primer_effect'};
 matlabbatch{1}.spm.stats.factorial_design.des.fd.fact(1).name = 'emotion';
 matlabbatch{1}.spm.stats.factorial_design.des.fd.fact(1).levels = 3;        % happy = 1, sad = 2, neutral = 3
 matlabbatch{1}.spm.stats.factorial_design.des.fd.fact(1).dept = 1;                                          
@@ -160,7 +160,7 @@ matlabbatch{1}.spm.stats.factorial_design.globalm.gmsca.gmsca_no = 1;
 matlabbatch{1}.spm.stats.factorial_design.globalm.glonorm = 1;
 
 %Estimate created Batch
-matlabbatch{2}.spm.stats.fmri_est.spmmat = {'/bif/storage/storage1/projects/emocon/SecondLevel/FullFact/Primer_effect/SPM.mat'};
+matlabbatch{2}.spm.stats.fmri_est.spmmat = {'Path/SPM.mat'};
 matlabbatch{2}.spm.stats.fmri_est.write_residuals = 0;
 matlabbatch{2}.spm.stats.fmri_est.method.Classical = 1;
 
