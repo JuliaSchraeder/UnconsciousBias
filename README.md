@@ -3,7 +3,7 @@
 ## Table of contents
 * [General info](#general-info)
 	* [Authors](#authors) 
-	* [Publication]
+	* [Publication](#OSF Link) 
 	* [License](#license)
 * [Experimental design](#experimental-design)
 * [Folder descripion](#folder-description)
