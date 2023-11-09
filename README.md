@@ -1,4 +1,4 @@
-# Unconscious Bias in Major Depressive Disorder
+# Unconscious Bias in Major Depressive Disorder: EEG-fMRI Study
 
 ## Table of contents
 * [General info](#general-info)
