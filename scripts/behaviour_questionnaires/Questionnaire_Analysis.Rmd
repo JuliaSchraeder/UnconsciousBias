@@ -1,0 +1,266 @@
+---
+title: "Questionnaire Data Backward Mask Task"
+output:
+  html_document: 
+    fig_height: 12
+    fig_caption: yes
+    fig_width: 8
+  word_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Import Library
+
+```{r}
+library(readxl)
+library(rstatix)
+library(ggplot2)
+library(apaTables)
+library(ez)
+library(dplyr)
+library(tidyr)
+library(car)
+library(emmeans)
+library(ggplot2)
+```
+
+# Import Dataset
+
+```{r}
+data <- read_excel("Path/BackwardMask_Questionnaire_Results.xlsx", 
+                 col_types = c("text", 
+         "numeric", "numeric", "numeric", 
+         "numeric", "numeric", "numeric", "numeric",  
+         "numeric", "numeric", "numeric", 
+         "numeric", "numeric", "numeric", 
+         "numeric", "numeric", "numeric", 
+         "numeric", "numeric", "numeric", 
+         "numeric", "numeric", "numeric", 
+         "numeric", "numeric", "numeric", 
+         "numeric", "text", "numeric", "numeric", 
+         "numeric", "numeric", "numeric", 
+         "numeric", "numeric", "numeric", 
+         "numeric", "numeric", "numeric", 
+         "numeric", "numeric", "numeric", 
+         "numeric", "numeric", "numeric", 
+         "numeric", "numeric", "numeric", 
+         "numeric"), na = "na")
+
+head(data)
+```
+
+
+# FB Analysis
+
+
+## Rename Questionnaires 
+
+
+```{r}
+
+data <- data
+
+colnames(data)[colnames(data) == "BDI-II Sum score"] ="BDI"
+colnames(data)[colnames(data) == "BVAQ_New"] ="BVAQ"
+colnames(data)[colnames(data) == "WMS Correct"] ="WMS"
+colnames(data)[colnames(data) == "TM A"] ="TMT_A"
+colnames(data)[colnames(data) == "TM B"] ="TMT_B"
+
+colnames(data)[colnames(data) == "DERS_Gesamtwert"] ="DERS_sum_score"
+colnames(data)[colnames(data) == "DERS_Nicht-Akzeptanz emotionalerReaktionen"] ="DERS_non_acceptance"
+colnames(data)[colnames(data) == "DERS_Probleme mit zielorientiertem Verhalten"] ="DERS_goals"
+colnames(data)[colnames(data) == "DERS_Impulskontrollprobleme"] ="DERS_impulse"
+colnames(data)[colnames(data) == "DERS_Mangel an emotionaler Aufmerksamkeit"] ="DERS_awareness"
+colnames(data)[colnames(data) == "DERS_Eingeschränkter Zugang zu Emotionsregulations-Strategien"] ="DERS_strategies"
+colnames(data)[colnames(data) == "DERS_Mangel an emotionaler Klarheit"] ="DERS_clarity"
+
+colnames(data)[colnames(data) == "CERQ_Selbstbeschuldigung"] ="CERQ_self_blame"
+colnames(data)[colnames(data) == "CERQ_Akzeptanz"] ="CERQ_acceptance"
+colnames(data)[colnames(data) == "CERQ_Rumination"] ="CERQ_rumination"
+colnames(data)[colnames(data) == "CERQ_Positive Refokussierung"] ="CERQ_positive_reinforcement"
+colnames(data)[colnames(data) == "CERQ_Refokussierung auf Planung"] ="CERQ_refocus_on_planning"
+colnames(data)[colnames(data) == "CERQ_Positive Neubewertung"] ="CERQ_positive_reappraisal"
+colnames(data)[colnames(data) == "CERQ_Relativieren"] ="CERQ_putting_into_perspective"
+colnames(data)[colnames(data) == "CERQ_Katastrophisierung"] ="CERQ_catastrophizing"
+colnames(data)[colnames(data) == "CERQ_Andere Beschuldigen"] ="CERQ_blaming_others"
+
+colnames(data)[colnames(data) == "Hamilton Score"] ="Hamilton_Score"
+
+colnames(data)[colnames(data) == "DigitSpan_Forwards_Span"] ="Digit_forward_span"
+colnames(data)[colnames(data) == "DigitSpan_ForwardsTotal Score"] ="Digit_forward_score"
+colnames(data)[colnames(data) == "DigitSpan_Backwards_Span"] ="Digit_backward_span"
+colnames(data)[colnames(data) == "DigitSpan_Backwards_Total Score"] ="Digit_backward_score"
+```
+
+## look at dataset
+
+```{r}
+tibble(data)
+```
+
+
+## take only columns i need
+# Transform data
+```{r}
+
+d_FB <- data[c('Group_MDD1_HC2', "BVAQ", "WMS", "TMT_A", "TMT_B", "STAI1", "STAI2",
+             "DERS_sum_score", "DERS_non_acceptance", "DERS_goals", "DERS_impulse", "DERS_awareness", "DERS_strategies", "DERS_clarity",
+             "CERQ_self_blame", "CERQ_acceptance", "CERQ_rumination", "CERQ_positive_reinforcement", "CERQ_refocus_on_planning",
+             "CERQ_positive_reappraisal", "CERQ_putting_into_perspective", "CERQ_catastrophizing", "CERQ_blaming_others",
+             "Digit_forward_span", "Digit_forward_score", "Digit_backward_span", "Digit_backward_score")]
+```
+
+
+## remove rows with missing values
+
+```{r}
+# Remove NA values from the dataset
+data_FB_clean <- na.omit(d_FB)
+
+# Check the dimensions of the cleaned dataset
+dim(data_FB_clean)
+
+# Use the cleaned dataset for further analysis
+
+```
+
+
+# Perform MANOVA
+
+If you have multiple questionnaires and want to compare the sum scores between two groups while controlling for multiple comparisons, you can use a multivariate approach such as a multivariate analysis of variance (MANOVA) or a permutation-based approach.
+
+
+```{r}
+# Assuming 'manova_out' is the result object from your MANOVA analysis
+manova_out <- manova(cbind(BVAQ, WMS, TMT_A, TMT_B, STAI1, STAI2,
+                           DERS_sum_score, DERS_non_acceptance, DERS_goals, DERS_impulse, DERS_awareness, DERS_strategies, DERS_clarity,
+                           CERQ_self_blame, CERQ_acceptance, CERQ_rumination, CERQ_positive_reinforcement, CERQ_refocus_on_planning,
+                           CERQ_positive_reappraisal, CERQ_putting_into_perspective, CERQ_catastrophizing, CERQ_blaming_others,
+                           Digit_forward_span, Digit_forward_score, Digit_backward_span, Digit_backward_score) 
+                     ~ Group_MDD1_HC2,
+                     data = data_FB_clean)
+summary(manova_out, tol=0)
+
+# Extract the dependent variable names
+dependent_vars <- c("BVAQ", "WMS", "TMT_A", "TMT_B", "STAI1", "STAI2",
+                    "DERS_sum_score", "DERS_non_acceptance", "DERS_goals", "DERS_impulse", "DERS_awareness", "DERS_strategies", "DERS_clarity",
+                    "CERQ_self_blame", "CERQ_acceptance", "CERQ_rumination", "CERQ_positive_reinforcement", "CERQ_refocus_on_planning",
+                    "CERQ_positive_reappraisal", "CERQ_putting_into_perspective", "CERQ_catastrophizing", "CERQ_blaming_others",
+                    "Digit_forward_span", "Digit_forward_score", "Digit_backward_span", "Digit_backward_score")
+
+```
+
+
+
+```{r}
+# Load required libraries
+#library(tidyverse)
+library(multcomp)
+
+# Read the Excel sheet (assuming your data is in a sheet named "Sheet1")
+data <- data_FB_clean
+# Specify the questionnaire variables
+dependent_vars <- c("BVAQ", "WMS", "TMT_A", "TMT_B", "STAI1", "STAI2",
+                    "DERS_sum_score", "DERS_non_acceptance", "DERS_goals", "DERS_impulse", "DERS_awareness", "DERS_strategies", "DERS_clarity",
+                    "CERQ_self_blame", "CERQ_acceptance", "CERQ_rumination", "CERQ_positive_reinforcement", "CERQ_refocus_on_planning",
+                    "CERQ_positive_reappraisal", "CERQ_putting_into_perspective", "CERQ_catastrophizing", "CERQ_blaming_others",
+                    "Digit_forward_span", "Digit_forward_score", "Digit_backward_span", "Digit_backward_score")
+
+# Perform paired t-tests with Bonferroni correction
+results <- purrr::map_df(dependent_vars, ~ {
+  var_name <- as.character(.x)
+  t_test_result <- t.test(data[[var_name]] ~ data$Group_MDD1_HC2, paired = FALSE)
+  p_value <- t_test_result$p.value
+  t_value <- t_test_result$statistic
+  
+  data.frame(
+    Variable = var_name,
+    P_Value = p_value,
+    T_Value = t_value
+  )
+})
+
+# Apply Bonferroni correction
+results$Adjusted_P_Value <- p.adjust(results$P_Value, method = "bonferroni")
+
+# Print the results table
+print(results)
+
+```
+
+
+# Plot data
+
+```{r}
+data_FB_clean <- data_FB_clean %>%
+  mutate(Group_MDD1_HC2 = as.factor(Group_MDD1_HC2))
+
+#Reshape the data into long format 
+d_FB_long <- data_FB_clean %>% gather(variable, value, -Group_MDD1_HC2)
+```
+
+```{r fig.width=11,fig.height=17}
+# Create violin plots
+
+ggplot(d_FB_long, aes(x = variable, y = value, fill = Group_MDD1_HC2)) +
+  geom_violin(pattern = c("22", " ", " ")) +
+  scale_fill_manual(values = c("gray", "white")) +
+  facet_wrap(~variable, scales = "free", ncol = 4) +
+  labs(x = "Variable", y = "Value") +
+  theme_bw()
+```
+
+# Plot BDI
+
+```{r}
+data <- read_excel("C:/Users/juhoffmann/OneDrive - Uniklinik RWTH Aachen/Paper/fMRi/Analysis/BackwardMask_Questionnaire_Results.xlsx", 
+                 col_types = c("text", 
+         "numeric", "numeric", "numeric", 
+         "numeric", "numeric", "numeric", "numeric",  
+         "numeric", "numeric", "numeric", 
+         "numeric", "numeric", "numeric", 
+         "numeric", "numeric", "numeric", 
+         "numeric", "numeric", "numeric", 
+         "numeric", "numeric", "numeric", 
+         "numeric", "numeric", "numeric", 
+         "numeric", "text", "numeric", "numeric", 
+         "numeric", "numeric", "numeric", 
+         "numeric", "numeric", "numeric", 
+         "numeric", "numeric", "numeric", 
+         "numeric", "numeric", "numeric", 
+         "numeric", "numeric", "numeric", 
+         "numeric", "numeric", "numeric", 
+         "numeric"), na = "na")
+
+
+colnames(data)[colnames(data) == "BDI-II Sum score"] ="BDI"
+
+d_BDI <- data[c('Group_MDD1_HC2', "BDI")]
+d_BDI <- na.omit(d_BDI)
+d_BDI <- d_BDI %>%
+  mutate(Group_MDD1_HC2 = as.factor(Group_MDD1_HC2))
+
+```
+
+
+```{r fig.width=2,fig.height=3}
+# Create the violin plot
+
+ggplot(d_BDI, aes(x = Group_MDD1_HC2, y = BDI, fill = Group_MDD1_HC2)) +
+  geom_violin(data = subset(d_BDI, Group_MDD1_HC2 == "1"), fill = "grey") +
+  geom_violin(data = subset(d_BDI, Group_MDD1_HC2 == "2"), fill = "white") +
+  labs(x = "Group_MDD1_HC2", y = "BDI") +
+  theme_bw()
+
+```
+
+
+
+```{r}
+pairwise_results <- t.test(d_BDI$BDI ~ d_BDI$Group_MDD1_HC2, paired = FALSE)
+pairwise_results
+```
+

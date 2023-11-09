@@ -1,0 +1,165 @@
+---
+title: "RT and FB Data Backward Mask - EmoCon Study"
+output:
+  html_document: 
+    fig_height: 12
+    fig_caption: yes
+    fig_width: 8
+  word_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+```{r}
+df <- read_excel("Path/BackwardMask_Mean_RT_Long.xlsx", 
+                 col_types = c("text", "text", "text", 
+         "text", "text", "text", "numeric", 
+         "numeric", "numeric", "numeric", 
+         "numeric", "numeric", "numeric", "numeric",  
+         "numeric", "numeric", "numeric", 
+         "numeric", "numeric", "numeric", 
+         "numeric", "numeric", "numeric", 
+         "numeric", "numeric", "numeric", 
+         "numeric", "numeric", "numeric", 
+         "numeric", "numeric", "numeric", 
+         "numeric", "text", "numeric", "numeric", 
+         "numeric", "numeric", "numeric", 
+         "numeric", "numeric", "numeric", 
+         "numeric", "numeric", "numeric", 
+         "numeric", "numeric", "numeric", 
+         "numeric", "numeric", "numeric", 
+         "numeric", "numeric", "numeric", 
+         "numeric"), na = "na")
+
+head(df)
+```
+
+
+```{r}
+data_RT <- df[c('Group_MDD1_HC2', "RT", "Gender_f1_m2", "name", "condition")]
+```
+
+
+```{r}
+ttests <- data_RT %>%
+  summarize(p_value = t.test(RT ~ Group_MDD1_HC2)$p.value,
+            t_value = t.test(RT ~ Group_MDD1_HC2)$statistic,
+            df = t.test(RT ~ Group_MDD1_HC2)$parameter)
+
+# Print the results
+print(ttests)
+```
+
+
+```{r}
+# Load the required library if you haven't already
+install.packages("dplyr")
+library(dplyr)
+
+# Assuming "dataset" is your data frame and "RT" is the reaction time column
+# and "group" is the column representing the two groups
+mean_RT_by_group <- data_RT %>%
+  group_by(Group_MDD1_HC2) %>%
+  summarise(mean_RT = mean(RT), sd_RT = sd(RT))
+
+# Print the result
+print(mean_RT_by_group)
+```
+
+```{r}
+ggplot(data_RT, mapping = aes(x = Group_MDD1_HC2, y = RT)) + 
+  geom_violin() +
+  theme_bw()
+```
+
+```{r}
+library(lsmeans)
+# Assuming "RT" is the reaction time column and "conditions" is the conditions column
+# using ANOVA
+model <- aov(RT ~ condition, data = data_RT)
+# Perform multiple comparisons with Tukey's HSD
+posthoc <- lsmeans::lsmeans(model, pairwise ~ condition, adjust = "bonferroni")
+# Display the results of multiple comparisons
+print(posthoc)
+# Assuming 'posthoc' contains the lsmeans posthoc results
+write.csv(posthoc, file = "Path/posthoc_results.csv", row.names = FALSE)
+
+```
+
+
+#############
+
+Group*condition
+```{r}
+# Group-wise t-tests for each condition
+
+grouped_ttests <- data_RT %>%
+  group_by(condition) %>%
+  summarize(p_value = t.test(RT ~ Group_MDD1_HC2)$p.value,
+            t_value = t.test(RT ~ Group_MDD1_HC2)$statistic,
+            df = t.test(RT ~ Group_MDD1_HC2)$parameter)
+
+# Print the results
+print(grouped_ttests)
+```
+
+
+```{r}
+# Apply Bonferroni correction
+grouped_ttests$p_value_adjusted <- p.adjust(grouped_ttests$p_value, method = "bonferroni")
+
+# Print the adjusted p-values
+print(grouped_ttests)
+
+```
+
+
+## Plot
+
+```{r}
+data_RT <- data_RT %>%
+  mutate(Group_MDD1_HC2 = as.factor(Group_MDD1_HC2))
+```
+
+
+```{r}
+# Create plots for reaction time ("RT") grouped by conditions and groups
+ggplot(data_RT, aes(x = condition, y = RT, fill = Group_MDD1_HC2)) +
+  geom_violin() +
+  facet_wrap(~ Group_MDD1_HC2, ncol = 1) +
+  labs(x = "Condition", y = "Reaction Time (RT)") +
+  theme_bw()
+
+```
+
+```{r}
+# Create plots for reaction time ("RT") grouped by conditions and side by side groups
+ggplot(data_RT, aes(x = condition, y = RT, fill = Group_MDD1_HC2)) +
+  geom_violin(position = "dodge", show.legend = FALSE) +
+  labs(x = "Condition", y = "Reaction Time (RT)") +
+  scale_fill_manual(values = c("blue", "red"), labels = c("Group 1", "Group 2")) +
+  theme_bw()
+
+```
+
+```{r fig.width=22,fig.height=15}
+# Create plots for reaction time ("RT") grouped by conditions with rotated condition labels, increased label sizes
+ggplot(data_RT, aes(x = condition, y = RT, fill = Group_MDD1_HC2)) +
+  geom_violin(position = "dodge", show.legend = TRUE) +
+  labs(x = "Condition", y = "Reaction Time (RT)") +
+  scale_fill_manual(values = c("blue", "lightblue"), labels = c("Group 1", "Group 2")) +
+  facet_grid(~ ifelse(grepl("conscious", condition), "Conscious", "Unconscious"), scales = "free_x", space = "free") +
+  geom_vline(xintercept = c(1.5,2.5,3.5,4.5,5.5,6.5,7.5,8.5,9.5,10.5,11.5,12.5,13.5,14.5,15.5,16.5,17.5), linetype = "dashed", color = "black") +
+  theme_bw() +
+  theme(axis.text.x = element_text(size = 16, angle = 45, hjust = 1),
+        axis.title.x = element_text(size = 20),
+        axis.title.y = element_text(size = 20),
+        axis.text.y = element_text(size = 20),
+        strip.text = element_text(size = 20))
+
+```
+
+
