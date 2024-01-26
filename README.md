@@ -25,7 +25,7 @@ Julia Schräder 1,2, Lennard Herzberg 1, Han-Gue Jo 3, Lucia Hernandez-Pena 1,2,
 
 #### OSF 
 
-[osf.io/mscz5](https://osf.io/bfrky)
+[osf.io/mscz5](https://osf.io/37xd2)
 
 #### License
 
