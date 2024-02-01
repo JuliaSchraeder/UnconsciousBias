@@ -1,0 +1,423 @@
+---
+title: "Mixed Model RT and Scores"
+output:
+  html_document:
+    df_print: paged
+---
+
+
+This script estimates the effects of task and personality traits on the RT in the Backward Mask Priming task 
+
+
+## Import Packages
+```{r}
+library(lme4)         # mixed model package
+library(lmerTest)     # library providing p-values for mixed models in lme4
+library(readxl)       # read excel
+library(ggplot2)      # graphics
+library(emmeans)      # library for post-hoc tests
+library(pbkrtest)     # needed for post-hoc tests in mixed models
+library(jtools)       # post hoc tests
+library(interactions) 
+library(effects)      # estimate effects
+library(apaTables)
+library(dplyr)
+library(tidyr)
+library(readr)
+library(afex)     
+library(cowplot)
+```
+
+# Supplementary Model 4
+
+## load dataset
+```{r}
+data <- read_excel("/Users/julia/Desktop/Git/EEGfMRIStudy/data/BackwardMask_Mean_RT_Long.xlsx", 
+                 col_types = c("text", "text", "text", 
+         "text", "text", "text", "numeric", 
+         "numeric", "numeric", "numeric", "numeric", 
+         "numeric", "numeric", "numeric", 
+         "numeric", "numeric", "numeric", 
+         "numeric", "numeric", "numeric", 
+         "numeric", "numeric", "numeric", 
+         "numeric", "numeric", "numeric", 
+         "numeric", "numeric", "numeric", 
+         "numeric", "numeric", "numeric", 
+         "numeric", "text", "numeric", "numeric", 
+         "numeric", "numeric", "numeric", 
+         "numeric", "numeric", "numeric", 
+         "numeric", "numeric", "numeric", 
+         "numeric", "numeric", "numeric", 
+         "numeric", "numeric", "numeric", 
+         "numeric", "numeric", "numeric", 
+         "numeric"), na = "na")
+head(data)
+```
+
+## rename columns
+
+```{r}
+colnames(data)[colnames(data) == "BVAQ_New"] ="BVAQ"
+colnames(data)[colnames(data) == "BDI-II Sum score"] ="BDI"
+
+colnames(data)[colnames(data) == "WMS Correct"] ="WMS"
+colnames(data)[colnames(data) == "TM A"] ="TMT_A"
+colnames(data)[colnames(data) == "TM B"] ="TMT_B"
+
+colnames(data)[colnames(data) == "DERS_Gesamtwert"] ="DERS_sum_score"
+colnames(data)[colnames(data) == "DERS_Nicht-Akzeptanz emotionalerReaktionen"] ="DERS_non_acceptance"
+colnames(data)[colnames(data) == "DERS_Probleme mit zielorientiertem Verhalten"] ="DERS_goals"
+colnames(data)[colnames(data) == "DERS_Impulskontrollprobleme"] ="DERS_impulse"
+colnames(data)[colnames(data) == "DERS_Mangel an emotionaler Aufmerksamkeit"] ="DERS_awareness"
+colnames(data)[colnames(data) == "DERS_Eingeschränkter Zugang zu Emotionsregulations-Strategien"] ="DERS_strategies"
+colnames(data)[colnames(data) == "DERS_Mangel an emotionaler Klarheit"] ="DERS_clarity"
+
+colnames(data)[colnames(data) == "CERQ_Selbstbeschuldigung"] ="CERQ_self_blame"
+colnames(data)[colnames(data) == "CERQ_Akzeptanz"] ="CERQ_acceptance"
+colnames(data)[colnames(data) == "CERQ_Rumination"] ="CERQ_rumination"
+colnames(data)[colnames(data) == "CERQ_Positive Refokussierung"] ="CERQ_positive_reinforcement"
+colnames(data)[colnames(data) == "CERQ_Refokussierung auf Planung"] ="CERQ_refocus_on_planning"
+colnames(data)[colnames(data) == "CERQ_Positive Neubewertung"] ="CERQ_positive_reappraisal"
+colnames(data)[colnames(data) == "CERQ_Relativieren"] ="CERQ_putting_into_perspective"
+colnames(data)[colnames(data) == "CERQ_Katastrophisierung"] ="CERQ_catastrophizing"
+colnames(data)[colnames(data) == "CERQ_Andere Beschuldigen"] ="CERQ_blaming_others"
+
+colnames(data)[colnames(data) == "Hamilton Score"] ="Hamilton_Score"
+
+colnames(data)[colnames(data) == "DigitSpan_Forwards_Span"] ="Digit_forward_span"
+colnames(data)[colnames(data) == "DigitSpan_ForwardsTotal Score"] ="Digit_forward_score"
+colnames(data)[colnames(data) == "DigitSpan_Backwards_Span"] ="Digit_backward_span"
+colnames(data)[colnames(data) == "DigitSpan_Backwards_Total Score"] ="Digit_backward_score"
+```
+
+### Digit Span Info
+Every item on Digit Span consists of two trials, each of which is scored 1 or 0 points. 
+Pacing of the item stimuli is critical on Digit Span, as variations in how quickly or slowly 
+they are provided can greatly impact item difficulty. The numbers are read at the rate of one 
+per second, and there are a number of techniques that examiners use to establish an accurate, 
+consistent pace.(https://www.sciencedirect.com/science/article/pii/B9780124046979000029)
+select important variables
+
+
+```{r}
+df <- data[c('Group_MDD1_HC2', "RT", "Gender_f1_m2", "name", "condition", "primer_emotion", "target_emotion",
+            "congruence", "consciousness","Alter",
+            "BVAQ", "WMS", "TMT_A", "TMT_B", "STAI1", "STAI2", "BDI",
+             "DERS_sum_score", "DERS_non_acceptance", "DERS_goals", "DERS_impulse", "DERS_awareness", "DERS_strategies", "DERS_clarity",
+             "CERQ_self_blame", "CERQ_acceptance", "CERQ_rumination", "CERQ_positive_reinforcement", "CERQ_refocus_on_planning",
+             "CERQ_positive_reappraisal", "CERQ_putting_into_perspective", "CERQ_catastrophizing", "CERQ_blaming_others",
+             "Digit_forward_span", "Digit_forward_score", "Digit_backward_span", "Digit_backward_score")]
+```
+
+## Drop NAs
+```{r}
+df %>% drop_na()
+```
+
+
+## Plot RT Density
+```{r}
+plot(density(df$RT),main="Density estimate of data")
+```
+
+```{r}
+x <- df$RT
+den <- density(x)
+dat <- data.frame(x = den$x, y = den$y)
+
+#Fit distributions
+library(fitdistrplus)
+fit.weibull <- fitdist(x, "weibull")
+fit.normal <- fitdist(x,"norm")
+fit.gamma <- fitdist(x, "gamma", lower = c(0, 0))
+
+# Compare fits graphically
+plot.legend <- c("Weibull", "Gamma","Normal")
+par(mfrow = c(2, 2)) #show 4 pictures
+denscomp(list(fit.weibull, fit.gamma, fit.normal), fitcol = c("red", "blue","green"), legendtext = plot.legend)
+qqcomp(list(fit.weibull, fit.gamma, fit.normal), fitcol = c("red", "blue","green"), legendtext = plot.legend)
+cdfcomp(list(fit.weibull, fit.gamma, fit.normal), fitcol = c("red", "blue","green"), legendtext = plot.legend)
+ppcomp(list(fit.weibull, fit.gamma, fit.normal), fitcol = c("red", "blue","green"), legendtext = plot.legend)
+
+```
+Assume normal distribution
+
+
+
+## factorize variables
+```{r}
+df$name                     <- factor(df$name, ordered = FALSE)
+df$consciousness            <- factor(df$consciousness, ordered = FALSE)
+df$congruence               <- factor(df$congruence, ordered = FALSE)
+df$primer_emotion           <- factor(df$primer_emotion, ordered = FALSE)
+df$target_emotion           <- factor(df$target_emotion, ordered = FALSE)
+df$Gender_f1_m2             <- factor(df$Gender_f1_m2, ordered = FALSE)
+df$Group_MDD1_HC2           <- factor(df$Group_MDD1_HC2, ordered = FALSE)
+```
+
+
+# Design Model
+
+include all questionnaires as factor an check which questionnaire contributes to RT with the drop function (drop1(Model1, test="F"))
+
+```{r}
+Model.drop <- lmer(RT ~ 
+                BVAQ + WMS + TMT_A + TMT_B + STAI1 + STAI2 + BDI
+               + DERS_sum_score + DERS_non_acceptance + DERS_goals + DERS_impulse + DERS_awareness + DERS_strategies + DERS_clarity
+               + CERQ_self_blame + CERQ_acceptance + CERQ_rumination + CERQ_positive_reinforcement + CERQ_refocus_on_planning
+               + CERQ_positive_reappraisal + CERQ_putting_into_perspective + CERQ_catastrophizing + CERQ_blaming_others
+               + Digit_forward_span + Digit_forward_score + Digit_backward_span + Digit_backward_score         
+               + (1|name), data=df)
+anova(Model.drop, type = 2, ddf= "Kenward-Roger")
+```
+
+            + consciousness:congruence:Group_MDD1_HC2
+               + consciousness:congruence:DERS_sum_score
+               + consciousness:congruence:STAI1
+               + consciousness:congruence:DERS_sum_score
+               + consciousness:congruence:DERS_impulse 
+
+```{r}
+Model <- lmer(RT ~ consciousness*primer_emotion*Group_MDD1_HC2 
+              + target_emotion*Group_MDD1_HC2 
+              + Gender_f1_m2 
+              + Alter # age
+              + BDI
+              + TMT_B
+              + STAI2
+              + DERS_sum_score
+              + DERS_impulse 
+              + DERS_goals
+              + DERS_awareness
+              + (1|name), data=df)
+summary(Model)
+```
+
+```{r}
+sjPlot:: tab_model(Model)
+```
+
+```{r}
+sjPlot::plot_model(Model, type = "diag")
+```
+
+```{r}
+anova.s <-anova(Model, type = 3, ddf= "Kenward-Roger")
+print(anova.s)
+```
+
+## Post Hoc tests
+```{r}
+eff.primer        <- emmeans(Model, pairwise ~ primer_emotion)
+eff.target        <- emmeans(Model, pairwise ~ target_emotion)
+eff.gender        <- emmeans(Model, pairwise ~ Gender_f1_m2)
+eff.consciousness <- emmeans(Model, pairwise ~ consciousness)
+eff.BDI           <- cor.test(df$RT,df$BDI, method="spearman")
+eff.TMT_B         <- cor.test(df$RT,df$TMT_B, method="spearman")
+eff.DERS_sum      <- cor.test(df$RT,df$DERS_sum_score, method="spearman")
+eff.DERS_impulse  <- cor.test(df$RT,df$DERS_impulse, method="spearman")
+eff.DERS_awareness<- cor.test(df$RT,df$DERS_awareness, method="spearman")
+eff.group_target  <- emmeans(Model, pairwise ~ Group_MDD1_HC2:target_emotion )
+```
+
+```{r}
+eff.primer
+eff.target
+eff.gender 
+eff.consciousness
+eff.BDI
+eff.TMT_B
+eff.DERS_sum
+eff.DERS_impulse
+eff.DERS_awareness
+eff.group_target
+```
+
+
+# Plot
+```{r}
+# Assuming you have a fitted model called "Model" and have extracted the coefficients
+coefficients <- fixef(Model)
+
+# Create a data frame with the coefficients and significance information
+coef_df <- data.frame(
+  Predictor = names(coefficients),
+  Coefficient = coefficients,
+  Significant = ifelse(p.adjust(coef(summary(Model))[, "Pr(>|t|)"], method = "holm") < 0.05, "*", "")
+)
+
+# Create a plot function for APA-style plots
+apa_plot <- function(df) {
+  ggplot(df, aes(x = reorder(Predictor, Coefficient), y = Coefficient)) +
+    geom_bar(stat = "identity", fill = "blue", alpha = 0.7) +
+    geom_text(aes(label = Significant), vjust = -0.5, size = 3.5) +
+    labs(x = NULL, y = "Coefficient", title = "Significant Effects") +
+    theme_minimal() +
+    theme(
+      axis.text.x = element_text(angle = 45, hjust = 1),
+      plot.title = element_text(hjust = 0.5, size = 16)
+    ) +
+    coord_flip()
+}
+
+# Create APA-style plot
+apa_plot(coef_df)
+```
+
+
+
+```{r}
+
+primer <-  afex_plot(Model, x = "primer_emotion", 
+            id = "name", dodge = 0.8, 
+            data_geom = geom_violin, 
+            mapping = c("linetype", "fill"),
+            error_arg = list(width = 0.2),
+            legend_title = "primer emotion",
+            data_arg = list(width = 0.5)) + 
+    ggpubr::theme_pubr() + 
+    scale_fill_manual(values = c("happy" = "greenyellow", "neutral" = "lightblue", "sad"= "orange")) + 
+    theme(legend.position="none") +
+  labs(y = "RT (in s)  ", x = "primer emotion")
+  
+target<-  afex_plot(Model, x = "target_emotion", 
+            id = "name", dodge = 0.8,
+            data_geom = geom_violin, 
+            mapping = c("linetype", "fill"),
+            error_arg = list(width = 0.2),
+            data_arg = list(width = 0.5)) + ggpubr::theme_pubr() + 
+    scale_fill_manual(values = c("happy" = "greenyellow", "neutral" = "lightblue", "sad"= "orange")) +
+    theme(legend.position="none") +
+    labs(y = "RT (in s)  ", x = "target emotion")
+  
+conscious<-  afex_plot(Model, x = "consciousness", 
+            id = "name", dodge = 0.8,
+            data_geom = geom_violin, 
+            mapping = "fill",
+            error_arg = list(width = 0.2),
+            data_arg = list(width = 0.5)) + ggpubr::theme_pubr() + 
+    scale_fill_manual(values = c("conscious" = "grey", "unconscious" = "white")) +
+    theme(legend.position="none") + 
+    labs(y = "RT (in s)  ", x = "")
+  
+gender<-    afex_plot(Model, x = "Gender_f1_m2", #trace = "target_emotion", panel = "consciousness", 
+            id = "name", dodge = 0.8,
+            factor_levels = list(Gender_f1_m2 = c("female", "male")),
+            data_geom = geom_violin, 
+            mapping = "fill",
+            error_arg = list(width = 0.2),
+            legend_title = "",
+            data_arg = list(width = 0.5)) + ggpubr::theme_pubr() + 
+    scale_fill_manual(values = c("female" = "grey", "male" = "white")) +
+    theme(legend.position="none") + 
+    labs(y = "RT (in s)  ", x = "")
+  
+group_target<-  afex_plot(Model, x = "target_emotion", panel = "Group_MDD1_HC2", 
+            id = "name", dodge = 0.8,
+            factor_levels = list(Group_MDD1_HC2 = c("MDD", "HC"),
+                                 target_emotion = c("h", "s", "n")),
+            data_geom = geom_violin, 
+            mapping = c("linetype", "fill", "group"), 
+            error_arg = list(width = 0.2),
+            legend_title = "",
+            data_arg = list(width = 0.5)) + ggpubr::theme_pubr() +
+    scale_fill_manual(values = c("h" = "greenyellow", "n" = "lightblue", "s"= "orange")) +
+    theme(legend.position="none") + 
+    labs(y = "RT (in s)", x = "")
+```
+
+```{r}
+plot_bdi <- ggplot(df, aes(x = BDI, y = RT)) +
+  geom_point() +
+  geom_smooth(method = "lm") +
+  theme_pubr() +
+  labs(x = "BDI-II", y ="RT (in s)")
+
+plot_tmt <- ggplot(df, aes(x = TMT_B, y = RT)) +
+  geom_point() +
+  geom_smooth(method = "lm") +
+  theme_pubr() +
+  labs(x = "TMT-B", y ="RT (in s)")
+
+plot_ders_sum <- ggplot(df, aes(x = DERS_sum_score, y = RT)) +
+  geom_point() +
+  geom_smooth(method = "lm") +
+  theme_pubr() +
+  labs(x = "DERS sum score", y ="RT (in s)")
+
+plot_ders_impulse <- ggplot(df, aes(x = DERS_impulse, y = RT)) +
+  geom_point() +
+  geom_smooth(method = "lm") +
+  theme_pubr() +
+  labs(x = "DERS impulse", y ="RT (in s)")
+
+plot_ders_awareness<- ggplot(df, aes(x = DERS_awareness, y = RT)) +
+  geom_point() +
+  geom_smooth(method = "lm") +
+  theme_pubr() +
+  labs(x = "DERS awareness", y ="RT (in s)")
+```
+
+
+```{r}
+# Combine plots into a grid
+combined_plots <- cowplot::plot_grid(primer, target, conscious, gender, group_target,
+                                     plot_bdi, plot_tmt, plot_ders_sum, plot_ders_impulse, plot_ders_awareness,
+                            labels = c("A", "B", "C", "D","E","F","G","H","I","J"),
+                            ncol = 2,nrow = 5)
+
+
+ggsave("Path/GLMM_RT_FB.tiff", combined_plots, width = 8, height = 13)
+
+print(combined_plots)
+```
+
+
+
+
+
+# Supplementary Model 5
+
+Test if medication has an effect on N170 values
+
+```{r}
+data <- read_excel("/Users/julia/Desktop/Git/EEGfMRIStudy/data/erp_N170_MDD_On_vs_Off_Medication.xlsx")
+head(data)
+```
+```{r}
+# Factorise variables
+
+data$mask[data$mask == "bewusst"] <- "conscious"
+data$mask[data$mask == "unbewusst"] <- "unconscious"
+data$name              <- factor(data$subName, ordered = FALSE)
+data$consciousness     <- factor(data$mask, ordered = FALSE)
+data$primer_emotion    <- factor(data$emotion, ordered = FALSE)
+data$group             <- factor(data$group, ordered = FALSE)
+data$gender            <- factor(data$Gender_f1_m2, ordered = FALSE)
+data$Medication_1yes_2no  <- factor(data$Medication_1yes_2no, ordered = FALSE)
+```
+
+
+```{r}
+Model_medication_effect <- lmer(N170 ~ consciousness*primer_emotion
+                          + gender 
+                          + age
+                          + Medication_1yes_2no
+                          + (1|name),
+                          data=data)
+```
+
+
+```{r}
+sjPlot::tab_model(Model_medication_effect)
+```
+
+```{r}
+sjPlot::plot_model(Model_medication_effect, type = "diag")
+```
+
+
+```{r}
+anova<-anova(Model_medication_effect, type = 3, ddf= "Kenward-Roger")
+print(anova)
+```

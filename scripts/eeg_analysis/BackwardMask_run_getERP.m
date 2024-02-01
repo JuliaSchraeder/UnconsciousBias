@@ -1,10 +1,10 @@
 clear all                                                                   % clear workspace
 
-addpath ('.../software/MATLABTOOLS/eeglab2022.1')                          % path for eeg lab
-eeglab; close;                                                              % open eeg lab and close GUI
+addpath ('C:/Users/juhoffmann/Desktop/eeglab2022.1')                          % path for eeg lab
+eeglab;                                                              % open eeg lab and close GUI
 
 % define datapath 
-DataPath = ('.../Data/EEG');
+DataPath = ('C:/Users/juhoffmann/Desktop/EEG_BIDS/EEG_250Hz/Matlab');
 
 % read in subjects 
 subjects = dir(fullfile(DataPath, '*Remove_Bad_Intervals.mat')); 

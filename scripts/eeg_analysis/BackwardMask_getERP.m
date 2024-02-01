@@ -42,6 +42,7 @@ index_n_h_strong = find(strcmp(Type, 'n_h_strong'));
 index_n_n_strong = find(strcmp(Type, 'n_n_strong'));
 index_n_s_strong = find(strcmp(Type, 'n_s_strong'));
 
+
 %% Get Trials with respective index
 % Bewusst
 trials_h_h_weak = Epoch(index_h_h_weak);
@@ -217,6 +218,10 @@ index_h_strong = [index_h_h_strong, index_h_n_strong, index_h_s_strong];
 index_n_strong = [index_n_h_strong, index_n_n_strong, index_n_s_strong];
 index_s_strong = [index_s_h_strong, index_s_n_strong, index_s_s_strong];
 
+index_h = [index_h_h_weak, index_h_n_weak, index_h_s_weak, index_h_h_strong, index_h_n_strong, index_h_s_strong];
+index_n = [index_n_h_weak, index_n_n_weak, index_n_s_weak, index_n_h_strong, index_n_n_strong, index_n_s_strong];
+index_s = [index_s_h_weak, index_s_n_weak, index_s_s_weak, index_s_h_strong, index_s_n_strong, index_s_s_strong];
+
 index_weak = [index_h_h_weak, index_h_n_weak, index_h_s_weak, index_n_h_weak, index_n_n_weak, index_n_s_weak, index_s_h_weak, index_s_n_weak, index_s_s_weak];
 index_strong = [index_h_h_strong, index_h_n_strong, index_h_s_strong, index_n_h_strong, index_n_n_strong, index_n_s_strong, index_s_h_strong, index_s_n_strong, index_s_s_strong];
 
@@ -228,6 +233,10 @@ trials_h_strong = Epoch(index_h_strong);
 trials_n_strong = Epoch(index_n_strong);
 trials_s_strong = Epoch(index_s_strong);
 
+trials_happy = Epoch(index_h);
+trials_neutral = Epoch(index_n);
+trials_sad = Epoch(index_s);
+
 trials_weak = Epoch(index_weak);
 trials_strong = Epoch(index_strong);
 
@@ -238,6 +247,10 @@ erp_epoch_s_weak = mean(EEG.data(:,:,trials_s_weak),3);
 erp_epoch_h_strong = mean(EEG.data(:,:,trials_h_strong),3);
 erp_epoch_n_strong = mean(EEG.data(:,:,trials_n_strong),3);
 erp_epoch_s_strong = mean(EEG.data(:,:,trials_s_strong),3);
+
+erp_epoch_happy = mean(EEG.data(:,:,trials_happy),3);
+erp_epoch_neutral = mean(EEG.data(:,:,trials_neutral),3);
+erp_epoch_sad = mean(EEG.data(:,:,trials_sad),3);
 
 erp_epoch_weak = mean(EEG.data(:,:,trials_weak),3);
 erp_epoch_strong =mean(EEG.data(:,:,trials_strong),3);
@@ -251,6 +264,10 @@ mean_h_strong = mean(erp_epoch_h_strong([channel1,channel2,channel3,channel4],:)
 mean_n_strong = mean(erp_epoch_n_strong([channel1,channel2,channel3,channel4],:),1);
 mean_s_strong = mean(erp_epoch_s_strong([channel1,channel2,channel3,channel4],:),1);
 
+mean_h = mean(erp_epoch_happy([channel1,channel2,channel3,channel4],:),1);
+mean_n = mean(erp_epoch_neutral([channel1,channel2,channel3,channel4],:),1);
+mean_s = mean(erp_epoch_sad([channel1,channel2,channel3,channel4],:),1);
+
 mean_weak = mean(erp_epoch_weak([channel1,channel2,channel3,channel4],:),1);
 mean_strong = mean(erp_epoch_strong([channel1,channel2,channel3,channel4],:),1);
 
@@ -261,6 +278,10 @@ Erp.s_weak = mean_s_weak;
 Erp.h_strong = mean_h_strong;
 Erp.n_strong = mean_n_strong;
 Erp.s_strong = mean_s_strong;
+
+Erp.happy = mean_h;
+Erp.neutral = mean_n;
+Erp.sad = mean_s;
 
 Erp.weak = mean_weak;
 Erp.strong = mean_strong;
