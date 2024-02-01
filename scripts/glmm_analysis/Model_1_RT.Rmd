@@ -29,7 +29,7 @@ library(readr)
 ## load dataset
 
 ```{r}
-data <- read_excel("path/BackwardMask_Mean_RT_Long.xlsx", 
+data <- read_excel("/Users/julia/Desktop/Git/EEGfMRIStudy/data/BackwardMask_Mean_RT_Long.xlsx", 
                  col_types = c("text", "text", "text", 
          "text", "text", "text", "numeric", 
          "numeric", "numeric", "numeric", "numeric", 
