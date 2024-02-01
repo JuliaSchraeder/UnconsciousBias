@@ -376,9 +376,85 @@ print(combined_plots)
 
 
 
-# Supplementary Model 5
 
-Test if medication has an effect on N170 values
+
+
+
+
+# Supplementary 
+
+Model 5:Test if medication has an effect on N170 values
+
+```{r}
+data <- read_excel("/Users/julia/Desktop/Git/EEGfMRIStudy/data/BackwardMask_Mean_RT_Long_MDD_On_vs_Off_Medication.xlsx", 
+                 col_types = c("text", "numeric","text", "text", 
+         "text", "text", "text", "numeric", 
+         "numeric", "numeric", "numeric", "numeric", 
+         "numeric", "numeric", "numeric", 
+         "numeric", "numeric", "numeric", 
+         "numeric", "numeric", "numeric", 
+         "numeric", "numeric", "numeric", 
+         "numeric", "numeric", "numeric", 
+         "numeric", "numeric", "numeric", 
+         "numeric", "numeric", "numeric", 
+         "numeric", "text", "numeric", "numeric", 
+         "numeric", "numeric", "numeric", 
+         "numeric", "numeric", "numeric", 
+         "numeric", "numeric", "numeric", 
+         "numeric", "numeric", "numeric", 
+         "numeric", "numeric", "numeric", 
+         "numeric", "numeric", "numeric", 
+         "numeric"), na = "na")
+
+head(data)
+```
+
+```{r}
+df <- data[c("RT", "Gender_f1_m2", "name", "condition", "primer_emotion", "target_emotion", "congruence", "consciousness", "Alter", "Medication_1yes_2no")]
+```
+
+
+## factorize variables
+```{r}
+df$name                     <- factor(df$name, ordered = FALSE)
+df$consciousness            <- factor(df$consciousness, ordered = FALSE)
+df$congruence               <- factor(df$congruence, ordered = FALSE)
+df$primer_emotion           <- factor(df$primer_emotion, ordered = FALSE)
+df$target_emotion           <- factor(df$target_emotion, ordered = FALSE)
+df$Gender_f1_m2             <- factor(df$Gender_f1_m2, ordered = FALSE)
+df$Medication_1yes_2no      <- factor(df$Medication_1yes_2no, ordered = FALSE)
+```
+
+
+## estimate model
+```{r}
+Model5 <- lmer(RT ~ consciousness*primer_emotion
+              + target_emotion
+              + Gender_f1_m2 
+              + Alter #age
+              + Medication_1yes_2no
+              + (1|name),
+              data = df)
+```
+
+
+```{r}
+sjPlot:: tab_model(Model5)
+```
+
+```{r}
+sjPlot::plot_model(Model5, type = "diag")
+```
+
+
+```{r}
+anova <-anova(Model5, type = 3, ddf= "Kenward-Roger")
+print(anova)
+```
+
+
+
+Model 6: Test if medication has an effect on N170 values
 
 ```{r}
 data <- read_excel("/Users/julia/Desktop/Git/EEGfMRIStudy/data/erp_N170_MDD_On_vs_Off_Medication.xlsx")
@@ -399,7 +475,7 @@ data$Medication_1yes_2no  <- factor(data$Medication_1yes_2no, ordered = FALSE)
 
 
 ```{r}
-Model_medication_effect <- lmer(N170 ~ consciousness*primer_emotion
+Model6 <- lmer(N170 ~ consciousness*primer_emotion
                           + gender 
                           + age
                           + Medication_1yes_2no
@@ -409,15 +485,17 @@ Model_medication_effect <- lmer(N170 ~ consciousness*primer_emotion
 
 
 ```{r}
-sjPlot::tab_model(Model_medication_effect)
+sjPlot::tab_model(Model6)
 ```
 
 ```{r}
-sjPlot::plot_model(Model_medication_effect, type = "diag")
+sjPlot::plot_model(Model6, type = "diag")
 ```
 
 
 ```{r}
-anova<-anova(Model_medication_effect, type = 3, ddf= "Kenward-Roger")
+anova<-anova(Model6, type = 3, ddf= "Kenward-Roger")
 print(anova)
 ```
+
+
