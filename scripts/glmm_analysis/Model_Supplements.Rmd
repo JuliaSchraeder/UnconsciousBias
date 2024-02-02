@@ -386,7 +386,7 @@ print(combined_plots)
 Model 5:Test if medication has an effect on N170 values
 
 ```{r}
-data <- read_excel("/Users/julia/Desktop/Git/EEGfMRIStudy/data/BackwardMask_Mean_RT_Long_MDD_On_vs_Off_Medication.xlsx", 
+data <- read_excel("C:/Users/juhoffmann/Desktop/Git/UnconsciousBias/data/BackwardMask_Mean_RT_Long_MDD_On_vs_Off_Medication.xlsx", 
                  col_types = c("text", "numeric","text", "text", 
          "text", "text", "text", "numeric", 
          "numeric", "numeric", "numeric", "numeric", 
@@ -457,7 +457,7 @@ print(anova)
 Model 6: Test if medication has an effect on N170 values
 
 ```{r}
-data <- read_excel("/Users/julia/Desktop/Git/EEGfMRIStudy/data/erp_N170_MDD_On_vs_Off_Medication.xlsx")
+data <- read_excel("C:/Users/juhoffmann/Desktop/Git/UnconsciousBias/data/erp_N170_MDD_On_vs_Off_Medication.xlsx")
 head(data)
 ```
 ```{r}
@@ -498,4 +498,47 @@ anova<-anova(Model6, type = 3, ddf= "Kenward-Roger")
 print(anova)
 ```
 
+
+
+
+Model 7: Test if medication has an effect on N170 values
+
+```{r}
+data <- read_excel("C:/Users/juhoffmann/Desktop/Git/UnconsciousBias/data/regressors_10_Cluster_MixedModel_MDD_On_vs_Off_Medication.xlsx", col_types = c("numeric", "numeric", "text", "text", "numeric", "numeric", "numeric", "numeric", "numeric","numeric"))
+head(data)
+```
+```{r}
+data <- subset(data, Medication_1yes_2no != "NaN") 
+```
+
+### Factorize variables
+
+```{r}
+data <- data%>%
+  mutate(gender = as.factor(gender_f1_m2)) %>%
+  mutate(group = as.factor(group_MDD1_HC2)) %>%
+  mutate(emotion = as.factor(emotion)) %>%
+  mutate(consciousness = as.factor(consciousness)) %>%
+  mutate(cluster_number = as.factor(Cluster_number)) %>%
+  mutate(Medication_1yes_2no = as.factor(Medication_1yes_2no))
+
+```
+
+
+```{r}
+Model7 <- lmer(Cluster_value ~ emotion*consciousness + gender + cluster_number + Medication_1yes_2no
+                       + (1|bids_number),
+                       data = data)
+```
+
+
+```{r}
+sjPlot::tab_model(Model7)
+```
+
+
+```{r}
+anova<-anova(Model7, type = 3, ddf= "Kenward-Roger")
+print(anova)
+```
 
