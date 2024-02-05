@@ -115,7 +115,7 @@ data2 <- scores_scaled  # Assuming this is your prepared data
 nb <- NbClust(data2, distance = "euclidean", min.nc = 2, max.nc = 15, method = "kmeans")
 ```
 
--> chose 2 Cluster
+-\> chose 2 Cluster
 
 Apply k-means clustering with the determined number of clusters:
 
@@ -134,19 +134,108 @@ data$cluster <- kmeans_result$cluster
 
 ```{r}
 table(data$group, data$cluster)
-#änderung
 ```
+
+```{r}
+# Converting 'group' to a factor for clearer labels in the plot
+
+data$group <- factor(data$group, labels = c("MDD", "HC"))
+
+ggplot(data, aes(x = cluster, fill = group)) + 
+  geom_bar(position = "dodge") +
+  labs(title = "Distribution of Emotion Regulation Groups",
+       x = "Emotion Regulation Group",
+       y = "Count",
+       fill = "Group") +
+  theme_minimal()
+```
+
+## switch dysfunctional CERQ items into negative scores
+
 ```{r}
 
-data$group <- factor(data$group, levels = c(1, 2), labels = c("MDD", "HC"))
-data$cluster <- factor(data$cluster)
-# Create the plot
-ggplot(data, aes(x = cluster, fill = group)) +
-  geom_bar(position = "dodge") +
-  labs(title = "Distribution of MDD and HC Participants Across Clusters",
-       x = "Cluster", y = "Number of Participants") +
-  scale_fill_brewer(palette = "Set1") +
-  theme_minimal()
+data <- data %>%
+  mutate(CERQ_self_blame_neg = if_else(CERQ_self_blame > 0, CERQ_self_blame * -1, CERQ_self_blame),
+         CERQ_rumination_neg = if_else(CERQ_rumination > 0, CERQ_rumination * -1, CERQ_rumination),
+         CERQ_catastrophizing_neg = if_else(CERQ_catastrophizing > 0, CERQ_catastrophizing * -1, CERQ_catastrophizing),
+         CERQ_blaming_others_neg = if_else(CERQ_blaming_others > 0, CERQ_blaming_others * -1, CERQ_blaming_others))
 
 ```
 
+Prepare Data: Scale ER strategy scores to ensure they’re on the same scale, which is important for clustering.
+
+```{r}
+scores_scaled <- scale(data[, c("CERQ_self_blame_neg", "CERQ_rumination_neg", "CERQ_catastrophizing_neg", "CERQ_blaming_others_neg", "CERQ_putting_into_perspective", "CERQ_positive_reinforcement", "CERQ_positive_reappraisal", "CERQ_refocus_on_planning", "CERQ_acceptance")])
+
+```
+
+Use the NbClust package for determining the number of clusters, which offers a wide range of methods:
+
+```{r}
+#install.packages("NbClust")
+library(NbClust)
+data2 <- scores_scaled  # Assuming this is your prepared data
+nb <- NbClust(data2, distance = "euclidean", min.nc = 2, max.nc = 15, method = "kmeans")
+```
+
+-\> chose 2 Cluster
+
+Apply k-means clustering with the determined number of clusters:
+
+```{r}
+set.seed(123)  # for reproducibility
+k <- 2  # assuming the optimal number of clusters is 2
+kmeans_result <- kmeans(scores_scaled, centers = k, nstart = 25)
+
+```
+
+Add the cluster assignments back to your original dataframe:
+
+```{r}
+data$cluster <- kmeans_result$cluster
+```
+
+```{r}
+table(data$group, data$cluster)
+```
+
+```{r}
+# Converting 'group' to a factor for clearer labels in the plot
+
+data$group <- factor(data$group, labels = c("MDD", "HC"))
+
+ggplot(data, aes(x = cluster, fill = group)) + 
+  geom_bar(position = "dodge") +
+  labs(title = "Distribution of Emotion Regulation Groups",
+       x = "Emotion Regulation Group",
+       y = "Count",
+       fill = "Group") +
+  theme_minimal()
+```
+
+```{r}
+cerq_scores_by_cluster <- data %>%
+  group_by(cluster) %>%
+  summarise(across(ends_with("score"),mean,na.rm = TRUE))
+
+```
+
+```{r}
+print(cerq_scores_by_cluster)
+```
+
+```{r}
+library(ggplot2)
+
+cerq_scores_by_cluster_long <- cerq_scores_by_cluster %>%
+  pivot_longer(-cluster, names_to = "CERQ_Score", values_to = "Value")
+
+ggplot(cerq_scores_by_cluster_long, aes(x = cluster, y = Value, fill = CERQ_Score)) +
+  geom_bar(stat = "identity", position = position_dodge()) +
+  theme_minimal() +
+  labs(title = "Mean CERQ Scores by Cluster",
+       x = "Cluster",
+       y = "Mean Score") +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+```
