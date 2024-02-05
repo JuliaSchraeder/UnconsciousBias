@@ -134,6 +134,7 @@ data$cluster <- kmeans_result$cluster
 
 ```{r}
 table(data$group, data$cluster)
+#änderung
 ```
 ```{r}
 
