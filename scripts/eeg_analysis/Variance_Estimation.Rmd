@@ -5,6 +5,7 @@ output: html_notebook
 
 ```{r}
 library(ggplot2)
+library(readxl)
 ```
 
 # Within subject variance
@@ -43,8 +44,6 @@ for(cond in conditions) {
 # Print the descriptive statistics
 print(descriptive_stats)
 
-# Optionally, write the descriptive statistics to a CSV file
-write.csv(descriptive_stats, "descriptive_statistics_baseR.csv", row.names = FALSE)
 
 # For plotting, we need to reshape data to a long format
 # This requires creating a new data frame with conditions and values in separate columns
@@ -123,9 +122,6 @@ for(cond in conditions) {
 
 # Print the descriptive statistics
 print(descriptive_stats)
-
-# Optionally, write the descriptive statistics to a CSV file
-write.csv(descriptive_stats, "descriptive_statistics_baseR_P100.csv", row.names = FALSE)
 
 # For plotting, we need to reshape data to a long format
 # This requires creating a new data frame with conditions and values in separate columns
@@ -266,3 +262,97 @@ for(group_name in names(grouped_data)) {
 print(results_df)
 ```
 
+## P300
+
+```{r}
+erp_P300_All<- read_excel("C:/Users/juhoffmann/Desktop/Git/UnconsciousBias/data/erp_P300_All.xlsx")
+```
+
+```{r}
+# Define the conditions to calculate statistics for
+conditions <- c("happy", "sad", "neutral", "weak", "strong")
+
+# Split the data by 'group' column
+grouped_data <- split(erp_P300_All, erp_P300_All$group)
+
+# Initialize an empty dataframe to store the results
+results_df <- data.frame()
+
+# Loop through each group to calculate statistics for each condition
+for(group_name in names(grouped_data)) {
+  # Extract the group's data
+  group_data <- grouped_data[[group_name]]
+  
+  # Loop through each condition to calculate statistics
+  for(condition in conditions) {
+    # Calculate statistics for the current condition in the current group
+    condition_data <- group_data[[condition]]
+    mean_val <- mean(condition_data, na.rm = TRUE)
+    median_val <- median(condition_data, na.rm = TRUE)
+    sd_val <- sd(condition_data, na.rm = TRUE)
+    var_val <- var(condition_data, na.rm = TRUE)
+    min_val <- min(condition_data, na.rm = TRUE)
+    max_val <- max(condition_data, na.rm = TRUE)
+    
+    # Compile the results into a dataframe
+    temp_df <- data.frame(Group = group_name,
+                          Condition = condition,
+                          Mean = mean_val,
+                          Median = median_val,
+                          SD = sd_val,
+                          Variance = var_val,
+                          Min = min_val,
+                          Max = max_val)
+    
+    # Append the results to the main results dataframe
+    results_df <- rbind(results_df, temp_df)
+  }
+}
+
+# Print the results dataframe
+print(results_df)
+```
+
+
+```{r}
+descriptive_stats <- data.frame(Condition = character(), Mean = numeric(), Median = numeric(),
+                                Variance = numeric(), Standard_Deviation = numeric(),
+                                Min = numeric(), Max = numeric(), N = integer(), Missing = integer())
+
+# List of conditions
+conditions <- c("happy", "sad", "neutral", "weak", "strong")
+
+# Loop through each condition to calculate statistics
+for(cond in conditions) {
+  values <- erp_P300_All[[cond]]
+  descriptive_stats <- rbind(descriptive_stats, data.frame(
+    Condition = cond,
+    Mean = mean(values, na.rm = TRUE),
+    Median = median(values, na.rm = TRUE),
+    Variance = var(values, na.rm = TRUE),
+    Standard_Deviation = sd(values, na.rm = TRUE),
+    Min = min(values, na.rm = TRUE),
+    Max = max(values, na.rm = TRUE),
+    N = sum(!is.na(values)),
+    Missing = sum(is.na(values))
+  ))
+}
+
+# Print the descriptive statistics
+print(descriptive_stats)
+
+
+# For plotting, we need to reshape data to a long format
+# This requires creating a new data frame with conditions and values in separate columns
+long_data <- data.frame(Participant = rep(1:nrow(erp_P300_All), times = length(conditions)),
+                        Condition = rep(conditions, each = nrow(erp_P300_All)),
+                        Value = c(erp_P300_All$happy, erp_P300_All$sad, erp_P300_All$neutral, erp_P300_All$weak, erp_P300_All$strong))
+
+# Plotting with ggplot2
+ggplot(long_data, aes(x = Condition, y = Value)) +
+  geom_boxplot() +
+  stat_summary(fun = mean, geom = "point", shape = 23, size = 3, color = "red") +
+  theme_minimal() +
+  labs(title = "P300 values with Means Highlighted", x = "Condition", y = "Value")
+
+```

@@ -182,30 +182,30 @@ n_s_strong_P100Range = mean_n_s_strong(1,(range_min:range_max));
 
 %% Save P100
 % Bewusst 
-Erp_P100.h_h_weak_P100 = min(h_h_weak_P100Range);
-Erp_P100.h_n_weak_P100 = min(h_n_weak_P100Range);
-Erp_P100.h_s_weak_P100 = min(h_s_weak_P100Range);
+Erp_P100.h_h_weak_P100 = max(h_h_weak_P100Range);
+Erp_P100.h_n_weak_P100 = max(h_n_weak_P100Range);
+Erp_P100.h_s_weak_P100 = max(h_s_weak_P100Range);
 
-Erp_P100.s_h_weak_P100 = min(s_h_weak_P100Range);
-Erp_P100.s_n_weak_P100 = min(s_n_weak_P100Range);
-Erp_P100.s_s_weak_P100 = min(s_s_weak_P100Range);
+Erp_P100.s_h_weak_P100 = max(s_h_weak_P100Range);
+Erp_P100.s_n_weak_P100 = max(s_n_weak_P100Range);
+Erp_P100.s_s_weak_P100 = max(s_s_weak_P100Range);
 
-Erp_P100.n_h_weak_P100 = min(n_h_weak_P100Range);
-Erp_P100.n_n_weak_P100 = min(n_n_weak_P100Range);
-Erp_P100.n_s_weak_P100 = min(n_s_weak_P100Range);
+Erp_P100.n_h_weak_P100 = max(n_h_weak_P100Range);
+Erp_P100.n_n_weak_P100 = max(n_n_weak_P100Range);
+Erp_P100.n_s_weak_P100 = max(n_s_weak_P100Range);
 
 % Unbewusst 
-Erp_P100.h_h_strong_P100 = min(h_h_strong_P100Range);
-Erp_P100.h_n_strong_P100 = min(h_n_strong_P100Range);
-Erp_P100.h_s_strong_P100 = min(h_s_strong_P100Range);
+Erp_P100.h_h_strong_P100 = max(h_h_strong_P100Range);
+Erp_P100.h_n_strong_P100 = max(h_n_strong_P100Range);
+Erp_P100.h_s_strong_P100 = max(h_s_strong_P100Range);
 
-Erp_P100.s_h_strong_P100 = min(s_h_strong_P100Range);
-Erp_P100.s_n_strong_P100 = min(s_n_strong_P100Range);
-Erp_P100.s_s_strong_P100 = min(s_s_strong_P100Range);
+Erp_P100.s_h_strong_P100 = max(s_h_strong_P100Range);
+Erp_P100.s_n_strong_P100 = max(s_n_strong_P100Range);
+Erp_P100.s_s_strong_P100 = max(s_s_strong_P100Range);
 
-Erp_P100.n_h_strong_P100 = min(n_h_strong_P100Range);
-Erp_P100.n_n_strong_P100 = min(n_n_strong_P100Range);
-Erp_P100.n_s_strong_P100 = min(n_s_strong_P100Range);
+Erp_P100.n_h_strong_P100 = max(n_h_strong_P100Range);
+Erp_P100.n_n_strong_P100 = max(n_n_strong_P100Range);
+Erp_P100.n_s_strong_P100 = max(n_s_strong_P100Range);
 
 
 
