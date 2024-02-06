@@ -5,11 +5,10 @@ output:
     df_print: paged
 ---
 
-
-This script estimates the effects of task and personality traits on the RT in the Backward Mask Priming task 
-
+This script estimates the effects of task and personality traits on the RT in the Backward Mask Priming task
 
 ## Import Packages
+
 ```{r}
 library(lme4)         # mixed model package
 library(lmerTest)     # library providing p-values for mixed models in lme4
@@ -31,6 +30,7 @@ library(cowplot)
 # Supplementary Model 4
 
 ## load dataset
+
 ```{r}
 data <- read_excel("/Users/julia/Desktop/Git/EEGfMRIStudy/data/BackwardMask_Mean_RT_Long.xlsx", 
                  col_types = c("text", "text", "text", 
@@ -91,13 +91,8 @@ colnames(data)[colnames(data) == "DigitSpan_Backwards_Total Score"] ="Digit_back
 ```
 
 ### Digit Span Info
-Every item on Digit Span consists of two trials, each of which is scored 1 or 0 points. 
-Pacing of the item stimuli is critical on Digit Span, as variations in how quickly or slowly 
-they are provided can greatly impact item difficulty. The numbers are read at the rate of one 
-per second, and there are a number of techniques that examiners use to establish an accurate, 
-consistent pace.(https://www.sciencedirect.com/science/article/pii/B9780124046979000029)
-select important variables
 
+Every item on Digit Span consists of two trials, each of which is scored 1 or 0 points. Pacing of the item stimuli is critical on Digit Span, as variations in how quickly or slowly they are provided can greatly impact item difficulty. The numbers are read at the rate of one per second, and there are a number of techniques that examiners use to establish an accurate, consistent pace.(<https://www.sciencedirect.com/science/article/pii/B9780124046979000029>) select important variables
 
 ```{r}
 df <- data[c('Group_MDD1_HC2', "RT", "Gender_f1_m2", "name", "condition", "primer_emotion", "target_emotion",
@@ -110,12 +105,13 @@ df <- data[c('Group_MDD1_HC2', "RT", "Gender_f1_m2", "name", "condition", "prime
 ```
 
 ## Drop NAs
+
 ```{r}
 df %>% drop_na()
 ```
 
-
 ## Plot RT Density
+
 ```{r}
 plot(density(df$RT),main="Density estimate of data")
 ```
@@ -140,11 +136,11 @@ cdfcomp(list(fit.weibull, fit.gamma, fit.normal), fitcol = c("red", "blue","gree
 ppcomp(list(fit.weibull, fit.gamma, fit.normal), fitcol = c("red", "blue","green"), legendtext = plot.legend)
 
 ```
+
 Assume normal distribution
 
-
-
 ## factorize variables
+
 ```{r}
 df$name                     <- factor(df$name, ordered = FALSE)
 df$consciousness            <- factor(df$consciousness, ordered = FALSE)
@@ -154,7 +150,6 @@ df$target_emotion           <- factor(df$target_emotion, ordered = FALSE)
 df$Gender_f1_m2             <- factor(df$Gender_f1_m2, ordered = FALSE)
 df$Group_MDD1_HC2           <- factor(df$Group_MDD1_HC2, ordered = FALSE)
 ```
-
 
 # Design Model
 
@@ -171,11 +166,13 @@ Model.drop <- lmer(RT ~
 anova(Model.drop, type = 2, ddf= "Kenward-Roger")
 ```
 
-            + consciousness:congruence:Group_MDD1_HC2
-               + consciousness:congruence:DERS_sum_score
-               + consciousness:congruence:STAI1
-               + consciousness:congruence:DERS_sum_score
-               + consciousness:congruence:DERS_impulse 
+```         
+        + consciousness:congruence:Group_MDD1_HC2
+           + consciousness:congruence:DERS_sum_score
+           + consciousness:congruence:STAI1
+           + consciousness:congruence:DERS_sum_score
+           + consciousness:congruence:DERS_impulse 
+```
 
 ```{r}
 Model <- lmer(RT ~ consciousness*primer_emotion*Group_MDD1_HC2 
@@ -207,6 +204,7 @@ print(anova.s)
 ```
 
 ## Post Hoc tests
+
 ```{r}
 eff.primer        <- emmeans(Model, pairwise ~ primer_emotion)
 eff.target        <- emmeans(Model, pairwise ~ target_emotion)
@@ -233,8 +231,8 @@ eff.DERS_awareness
 eff.group_target
 ```
 
+## Plot
 
-# Plot
 ```{r}
 # Assuming you have a fitted model called "Model" and have extracted the coefficients
 coefficients <- fixef(Model)
@@ -263,8 +261,6 @@ apa_plot <- function(df) {
 # Create APA-style plot
 apa_plot(coef_df)
 ```
-
-
 
 ```{r}
 
@@ -358,7 +354,6 @@ plot_ders_awareness<- ggplot(df, aes(x = DERS_awareness, y = RT)) +
   labs(x = "DERS awareness", y ="RT (in s)")
 ```
 
-
 ```{r}
 # Combine plots into a grid
 combined_plots <- cowplot::plot_grid(primer, target, conscious, gender, group_target,
@@ -372,18 +367,9 @@ ggsave("Path/GLMM_RT_FB.tiff", combined_plots, width = 8, height = 13)
 print(combined_plots)
 ```
 
+# Supplementary
 
-
-
-
-
-
-
-
-
-# Supplementary 
-
-Model 5:Test if medication has an effect on N170 values
+## Model 5: Test if medication has an effect on RT values
 
 ```{r}
 data <- read_excel("C:/Users/juhoffmann/Desktop/Git/UnconsciousBias/data/BackwardMask_Mean_RT_Long_MDD_On_vs_Off_Medication.xlsx", 
@@ -413,8 +399,8 @@ head(data)
 df <- data[c("RT", "Gender_f1_m2", "name", "condition", "primer_emotion", "target_emotion", "congruence", "consciousness", "Alter", "Medication_1yes_2no")]
 ```
 
+factorize variables
 
-## factorize variables
 ```{r}
 df$name                     <- factor(df$name, ordered = FALSE)
 df$consciousness            <- factor(df$consciousness, ordered = FALSE)
@@ -425,8 +411,8 @@ df$Gender_f1_m2             <- factor(df$Gender_f1_m2, ordered = FALSE)
 df$Medication_1yes_2no      <- factor(df$Medication_1yes_2no, ordered = FALSE)
 ```
 
+estimate model
 
-## estimate model
 ```{r}
 Model5 <- lmer(RT ~ consciousness*primer_emotion
               + target_emotion
@@ -437,7 +423,6 @@ Model5 <- lmer(RT ~ consciousness*primer_emotion
               data = df)
 ```
 
-
 ```{r}
 sjPlot:: tab_model(Model5)
 ```
@@ -446,20 +431,18 @@ sjPlot:: tab_model(Model5)
 sjPlot::plot_model(Model5, type = "diag")
 ```
 
-
 ```{r}
 anova <-anova(Model5, type = 3, ddf= "Kenward-Roger")
 print(anova)
 ```
 
-
-
-Model 6: Test if medication has an effect on N170 values
+## Model 6: Test if medication has an effect on N170 values
 
 ```{r}
 data <- read_excel("C:/Users/juhoffmann/Desktop/Git/UnconsciousBias/data/erp_N170_MDD_On_vs_Off_Medication.xlsx")
 head(data)
 ```
+
 ```{r}
 # Factorise variables
 
@@ -473,7 +456,6 @@ data$gender            <- factor(data$Gender_f1_m2, ordered = FALSE)
 data$Medication_1yes_2no  <- factor(data$Medication_1yes_2no, ordered = FALSE)
 ```
 
-
 ```{r}
 Model6 <- lmer(N170 ~ consciousness*primer_emotion
                           + gender 
@@ -483,7 +465,6 @@ Model6 <- lmer(N170 ~ consciousness*primer_emotion
                           data=data)
 ```
 
-
 ```{r}
 sjPlot::tab_model(Model6)
 ```
@@ -492,26 +473,23 @@ sjPlot::tab_model(Model6)
 sjPlot::plot_model(Model6, type = "diag")
 ```
 
-
 ```{r}
 anova<-anova(Model6, type = 3, ddf= "Kenward-Roger")
 print(anova)
 ```
 
-
-
-
-Model 7: Test if medication has an effect on N170 values
+## Model 7: Test if medication has an effect on N170/BOLD values
 
 ```{r}
 data <- read_excel("C:/Users/juhoffmann/Desktop/Git/UnconsciousBias/data/regressors_10_Cluster_MixedModel_MDD_On_vs_Off_Medication.xlsx", col_types = c("numeric", "numeric", "text", "text", "numeric", "numeric", "numeric", "numeric", "numeric","numeric"))
 head(data)
 ```
+
 ```{r}
 data <- subset(data, Medication_1yes_2no != "NaN") 
 ```
 
-### Factorize variables
+Factorize variables
 
 ```{r}
 data <- data%>%
@@ -524,21 +502,17 @@ data <- data%>%
 
 ```
 
-
 ```{r}
 Model7 <- lmer(Cluster_value ~ emotion*consciousness + gender + cluster_number + Medication_1yes_2no
                        + (1|bids_number),
                        data = data)
 ```
 
-
 ```{r}
 sjPlot::tab_model(Model7)
 ```
-
 
 ```{r}
 anova<-anova(Model7, type = 3, ddf= "Kenward-Roger")
 print(anova)
 ```
-
