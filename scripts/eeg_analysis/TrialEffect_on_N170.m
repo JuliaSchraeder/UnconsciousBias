@@ -128,3 +128,62 @@ legend('Data points', 'Regression Line', 'Location', 'best');
 hold off; % Release the figure for other plots
 
 
+%% get individual slope
+
+% Initialize arrays to store participant IDs and their corresponding slopes
+participantIDs = strings(length(participants), 1);
+slopes = zeros(length(participants), 1);
+
+for i = 1:length(participants)
+    participant = strcat('sub', participants(i).name(5:7)); % Extract participant ID
+    participantIDs(i) = participant; % Store participant ID
+    slopes(i) = results.(participant).regression.b(2); % Store the slope of N170 amplitude change
+end
+
+% Create a table with participant IDs and their slopes
+slopeTable = table(participantIDs, slopes, 'VariableNames', {'ParticipantID', 'Slope'});
+
+% Display the table
+disp(slopeTable);
+
+% Optionally, save the table to a file
+writetable(slopeTable, 'C:/Users/juhoffmann/Desktop/Git/UnconsciousBias/data/N170_ParticipantSlopes.csv'));
+
+%% combine individual slope with existing datasheet
+
+% Step 1: Read the existing dataset
+existingDatasetPath = 'C:/Users/juhoffmann/Desktop/Git/UnconsciousBias/data/erp_N170_HC_and_MDD.xlsx';
+existingDataset = readtable(existingDatasetPath);
+
+% Step 2: Read the slopes data
+slopeDatasetPath = 'C:/Users/juhoffmann/Desktop/Git/UnconsciousBias/data/N170_ParticipantSlopes.csv';
+slopeDataset = readtable(slopeDatasetPath);
+
+% Adjust participant IDs in the slope dataset to match the existing dataset format if necessary
+% For example, if existing dataset uses "sub-01" format and slope uses "sub01"
+slopeDataset.ParticipantID = regexprep(slopeDataset.ParticipantID, 'sub', 'sub-');
+
+% Step 3: Match participant IDs and add slopes to the existing dataset
+% Initialize a column for slopes in the existing dataset
+existingDataset.Slope = NaN(height(existingDataset), 1); % Add a new 'Slope' column
+
+for i = 1:height(slopeDataset)
+    participantID = slopeDataset.ParticipantID{i};
+    slope = slopeDataset.Slope(i);
+    
+    % Find the row index(es) for this participant in the existing dataset
+    idx = find(strcmp(existingDataset.subName, participantID));
+    
+    % Step 4: Update the existing dataset with the slope information
+    if ~isempty(idx)
+        existingDataset.Slope(idx) = slope;
+    end
+end
+
+% Step 5: Save the updated dataset back to an Excel file
+updatedDatasetPath = 'C:/Users/juhoffmann/Desktop/Git/UnconsciousBias/data/updated_erp_N170_HC_and_MDD.xlsx';
+writetable(existingDataset, updatedDatasetPath);
+
+% Provide path for download
+updatedDatasetPath
+

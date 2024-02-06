@@ -258,15 +258,55 @@ plot(x,mean(erp_N170_weak,1),'Color','magenta','LineWidth',1.5); hold off;
 ax = gca;
 ax.XAxisLocation = 'origin';
 ax.YAxisLocation = 'origin';
+ax.FontSize = 12;
 legend('unconscious sd','unconscious','conscious sd','conscious','Location','northeast');
 legend('boxoff'); title(['unconscious vs. conscious trials ', 'P7/P07+P8/P08']);  
-xlim([-250 820]); xlabel('Amplitude (uV)', 'Position', [0 9],'FontSize', 8); ylabel('Time(ms)', 'Position',[0 0],'FontSize', 8); grid off; box off
+xlim([-250 820]); xlabel('Amplitude (uV)', 'Position', [0 13],'FontSize', 12); ylabel('Time(ms)', 'Position',[0 -2],'FontSize', 12); grid off; box off
 ylim([-4 15])
 set(gcf,'Position',[15 15 750 600])
-print(gcf, '-dtiff', 'unconscious vs conscious trials.tiff');
+print(gcf, '-dtiff', 'unconscious vs conscious trials.png');
 
 
 
+
+
+
+
+
+
+figure,
+% sd for strong
+y = mean(erp_N170_strong,1);
+x = erp_times;
+std_dev = std(erp_N170_strong);
+curve1 = y + std_dev;
+curve2 = y - std_dev;
+x2 = [x, fliplr(x)];
+inBetween = [curve1, fliplr(curve2)];
+%fill(x2, inBetween, [0 0.4470 0.7410],'LineStyle',"none",'FaceAlpha',.3); 
+plot(x, mean(erp_N170_strong,1),'Color',[0 0.4470 0.7410],'LineWidth',1.5,'LineStyle','--'); hold on;
+
+%sd for weak
+y = mean(erp_N170_weak,1);
+x = erp_times;
+std_dev = std(erp_N170_weak);
+curve1 = y + std_dev;
+curve2 = y - std_dev;
+x2 = [x, fliplr(x)];
+inBetween = [curve1, fliplr(curve2)];
+%fill(x2, inBetween, 'magenta','LineStyle',"none",'FaceAlpha',.3); 
+plot(x,mean(erp_N170_weak,1),'Color','magenta','LineWidth',1.5); hold off;
+
+ax = gca;
+ax.XAxisLocation = 'origin';
+ax.YAxisLocation = 'origin';
+ax.FontSize = 12;
+legend('unconscious','conscious','northeast');
+legend('boxoff'); title(['unconscious vs. conscious trials ', 'P7/P07+P8/P08']);  
+xlim([-250 820]); xlabel('Amplitude (uV)', 'Position', [0 13],'FontSize', 12); ylabel('Time(ms)', 'Position',[0 -2],'FontSize', 12); grid off; box off
+ylim([-4 15])
+set(gcf,'Position',[15 15 750 600])
+print(gcf, '-dtiff', 'unconscious vs conscious trials 2.png');
 
 
 
@@ -311,12 +351,13 @@ plot(x,mean(erp_N170_neutral,1),'Color',[0.3010 0.7450 0.9330],'LineWidth',1.5);
 ax = gca;
 ax.XAxisLocation = 'origin';
 ax.YAxisLocation = 'origin';
+ax.FontSize = 12;
 legend('happy sd','happy','sad sd','sad','neutral sd','neutral','Location','northeast');
-legend('boxoff'); title(['unconscious vs. conscious trials ', 'P7/P07+P8/P08']);  
-xlim([-250 820]); xlabel('Amplitude (uV)', 'Position', [0 9],'FontSize', 8); ylabel('Time(ms)', 'Position',[0 0],'FontSize', 8); grid off; box off
+legend('boxoff'); title(['emotional trials ', 'P7/P07+P8/P08']);  
+xlim([-250 820]); xlabel('Amplitude (uV)', 'Position', [0 13],'FontSize', 12); ylabel('Time(ms)', 'Position',[0 -2],'FontSize', 12); grid off; box off
 ylim([-4 15])
 set(gcf,'Position',[15 15 750 600])
-print(gcf, '-dtiff', 'emotions.tiff');
+print(gcf, '-dtiff', 'emotions.png');
 
 
 
@@ -326,11 +367,143 @@ print(gcf, '-dtiff', 'emotions.tiff');
 
 
 
+figure,
+% sd for happy
+y = mean(erp_N170_happy,1);
+x = erp_times;
+std_dev = std(erp_N170_happy);
+curve1 = y + std_dev;
+curve2 = y - std_dev;
+x2 = [x, fliplr(x)];
+inBetween = [curve1, fliplr(curve2)];
+%fill(x2, inBetween, [0.4660 0.6740 0.1880],'LineStyle',"none",'FaceAlpha',.5); 
+plot(x, mean(erp_N170_happy,1),'Color',[0.4660 0.6740 0.1880],'LineWidth',1.5); hold on;
+
+%sd for sad
+y = mean(erp_N170_sad,1);
+x = erp_times;
+std_dev = std(erp_N170_sad);
+curve1 = y + std_dev;
+curve2 = y - std_dev;
+x2 = [x, fliplr(x)];
+inBetween = [curve1, fliplr(curve2)];
+%fill(x2, inBetween, [0.9290 0.6940 0.1250],'LineStyle',"none",'FaceAlpha',.3); 
+plot(x,mean(erp_N170_sad,1),'Color',[0.9290 0.6940 0.1250],'LineWidth',1.5); 
+
+
+%sd for neutral
+y = mean(erp_N170_neutral,1);
+x = erp_times;
+std_dev = std(erp_N170_neutral);
+curve1 = y + std_dev;
+curve2 = y - std_dev;
+x2 = [x, fliplr(x)];
+inBetween = [curve1, fliplr(curve2)];
+%fill(x2, inBetween, [0.3010 0.7450 0.9330],'LineStyle',"none",'FaceAlpha',.3); 
+plot(x,mean(erp_N170_neutral,1),'Color',[0.3010 0.7450 0.9330],'LineWidth',1.5); hold off;
+
+ax = gca;
+ax.XAxisLocation = 'origin';
+ax.YAxisLocation = 'origin';
+ax.FontSize = 12;
+legend('happy sd','happy','sad sd','sad','neutral sd','neutral','Location','northeast');
+legend('boxoff'); title(['emotional trials ', 'P7/P07+P8/P08']);  
+xlim([-250 820]); xlabel('Amplitude (uV)', 'Position', [0 13],'FontSize', 12); ylabel('Time(ms)', 'Position',[0 -2],'FontSize', 12); grid off; box off
+ylim([-4 15])
+set(gcf,'Position',[15 15 750 600])
+print(gcf, '-dtiff', 'emotions2.png');
 
 
 
 
 
+% 
+% 
+% % P300
+% 
+% Nguyen, V. T., & Cunnington, R. (2014). The superior temporal sulcus and the N170 during face processing: single trial analysis of concurrent EEG–fMRI. NeuroImage, 86, 492-502.
+% channel1 = 19;                                                              % channel Pz
+% channel2 = 18;                                                              % channel Cz
+% channel3 = 17;                                                              % channel Fz
+% channel4 = 64;                                                              % channel CPz
+% 
+% Range for N170 within ERP...
+% Range von 150ms-200ms für N170 sind --> 0,25*ms=datapoints. 
+% range_min = 113;                                                             % 200ms Baseline+250ms = 450ms (112,5 datapoints)
+% range_max = 138;                                                            % 200ms Baseline+350ms = 550ms (137,5 datapoints)
+% 
+% 
+% 
+% % Run the script for all patients 
+% 
+% 
+% P300 = {};
+% 
+% for i = 1:length(all_subjects)
+%     FileName = all_subjects(i).name;
+%     filePath = fullfile(DataPath, FileName);
+%     EEG = pop_loadbva(filePath);                                            % read in EEG data
+%     subName = FileName(1:7);    % get SubName
+%     
+%     if ismember(FileName, MDD_list)
+%         Group = "MDD";
+%     else 
+%         Group = "HC";
+%     end 
+% 
+%     Erp = BackwardMask_getERP_P300(EEG,channel1,channel2,channel3,channel4,range_min,range_max);
+% 
+%     To plot ERPs
+%     erp_P300_neutral_strong(i,:) = Erp.n_strong;
+%     erp_P300_happy_strong(i,:) = Erp.h_strong;
+%     erp_P300_sad_strong(i,:) = Erp.s_strong;
+%     
+%     erp_P300_neutral_weak(i,:) = Erp.n_weak;
+%     erp_P300_happy_weak(i,:) = Erp.h_weak;
+%     erp_P300_sad_weak(i,:) = Erp.s_weak;
+%     
+%     erp_P300_happy(i,:) = Erp.happy;
+%     erp_P300_neutral(i,:) = Erp.neutral;
+%     erp_P300_sad(i,:) = Erp.sad;
+%     
+%     
+%     erp_P300_weak(i,:) = Erp.weak;
+%     erp_P300_strong(i,:) = Erp.strong;
+% 
+%     erp_times = Erp.times;
+% 
+% 
+%     For EEG-fMRI Analysis
+%     P300{i,1} = subName;
+% 
+%     P300{i,2} = Erp.h_strong_P300;
+%     P300{i,3} = Erp.n_strong_P300;
+%     P300{i,4} = Erp.s_strong_P300;
+% 
+%     P300{i,5} = Erp.h_weak_P300;
+%     P300{i,6} = Erp.n_weak_P300;
+%     P300{i,7} = Erp.s_weak_P300;
+% 
+%     P300{i,8} = Erp.weak_P300;
+%     P300{i,9} = Erp.strong_P300;
+% 
+%     P300{i,10} = Erp.happy_P300;
+%     P300{i,11} = Erp.sad_P300;
+%     P300{i,12} = Erp.neutral_P300;
+%     P300{i,13} = Group;
+% 
+% end       
+% 
+% 
+% header = {'subName',...
+%     'h_strong','n_strong','s_strong',...
+%     'h_weak','n_weak','s_weak',...
+%     'weak','strong','happy','sad','neutral','group'};
+% P300df = [header; P300]; 
+% writecell(P300df,'C:/Users/juhoffmann/Desktop/Git/UnconsciousBias/data/erp_P300_All.xlsx');
+% 
+% 
+% 
 
 
 
