@@ -1,4 +1,4 @@
-function Erp = BackwardMask_getERP(EEG,channel1,channel2,channel3,channel4,range_min,range_max)
+function Erp_P100 = BackwardMask_getERP_P100(EEG,channel1,channel2,channel3,channel4,range_min,range_max)
   
  
 % Create Epochs from -200ms to 800 ms
@@ -126,86 +126,86 @@ mean_n_s_strong = mean(erp_epoch_n_s_strong([channel1,channel2,channel3,channel4
 
 %% Save ERP
 % Bewusst
-Erp.h_h_weak = mean_h_h_weak;
-Erp.h_n_weak = mean_h_n_weak;
-Erp.h_s_weak = mean_h_s_weak;
+Erp_P100.h_h_weak = mean_h_h_weak;
+Erp_P100.h_n_weak = mean_h_n_weak;
+Erp_P100.h_s_weak = mean_h_s_weak;
 
-Erp.s_h_weak = mean_s_h_weak;
-Erp.s_n_weak = mean_s_n_weak;
-Erp.s_s_weak = mean_s_s_weak;
+Erp_P100.s_h_weak = mean_s_h_weak;
+Erp_P100.s_n_weak = mean_s_n_weak;
+Erp_P100.s_s_weak = mean_s_s_weak;
 
-Erp.n_h_weak = mean_n_h_weak;
-Erp.n_n_weak = mean_n_n_weak;
-Erp.n_s_weak = mean_n_s_weak;
+Erp_P100.n_h_weak = mean_n_h_weak;
+Erp_P100.n_n_weak = mean_n_n_weak;
+Erp_P100.n_s_weak = mean_n_s_weak;
 
 % Unbewusst
-Erp.h_h_strong = mean_h_h_strong;
-Erp.h_n_strong = mean_h_n_strong;
-Erp.h_s_strong = mean_h_s_strong;
+Erp_P100.h_h_strong = mean_h_h_strong;
+Erp_P100.h_n_strong = mean_h_n_strong;
+Erp_P100.h_s_strong = mean_h_s_strong;
 
-Erp.s_h_strong = mean_s_h_strong;
-Erp.s_n_strong = mean_s_n_strong;
-Erp.s_s_strong = mean_s_s_strong;
+Erp_P100.s_h_strong = mean_s_h_strong;
+Erp_P100.s_n_strong = mean_s_n_strong;
+Erp_P100.s_s_strong = mean_s_s_strong;
 
-Erp.n_h_strong = mean_n_h_strong;
-Erp.n_n_strong = mean_n_n_strong;
-Erp.n_s_strong = mean_n_s_strong;
+Erp_P100.n_h_strong = mean_n_h_strong;
+Erp_P100.n_n_strong = mean_n_n_strong;
+Erp_P100.n_s_strong = mean_n_s_strong;
 
 
-%% Get N170 and Save
+%% Get P100 and Save
 
 % Bewusst
-h_h_weak_N170Range = mean_h_h_weak(1,(range_min:range_max)); 
-h_n_weak_N170Range = mean_h_n_weak(1,(range_min:range_max)); 
-h_s_weak_N170Range = mean_h_s_weak(1,(range_min:range_max)); 
+h_h_weak_P100Range = mean_h_h_weak(1,(range_min:range_max)); 
+h_n_weak_P100Range = mean_h_n_weak(1,(range_min:range_max)); 
+h_s_weak_P100Range = mean_h_s_weak(1,(range_min:range_max)); 
 
-s_h_weak_N170Range = mean_s_h_weak(1,(range_min:range_max)); 
-s_n_weak_N170Range = mean_s_n_weak(1,(range_min:range_max)); 
-s_s_weak_N170Range = mean_s_s_weak(1,(range_min:range_max)); 
+s_h_weak_P100Range = mean_s_h_weak(1,(range_min:range_max)); 
+s_n_weak_P100Range = mean_s_n_weak(1,(range_min:range_max)); 
+s_s_weak_P100Range = mean_s_s_weak(1,(range_min:range_max)); 
 
-n_h_weak_N170Range = mean_n_h_weak(1,(range_min:range_max)); 
-n_n_weak_N170Range = mean_n_n_weak(1,(range_min:range_max)); 
-n_s_weak_N170Range = mean_n_s_weak(1,(range_min:range_max)); 
+n_h_weak_P100Range = mean_n_h_weak(1,(range_min:range_max)); 
+n_n_weak_P100Range = mean_n_n_weak(1,(range_min:range_max)); 
+n_s_weak_P100Range = mean_n_s_weak(1,(range_min:range_max)); 
 
 % Unbewusst
-h_h_strong_N170Range = mean_h_h_strong(1,(range_min:range_max)); 
-h_n_strong_N170Range = mean_h_n_strong(1,(range_min:range_max)); 
-h_s_strong_N170Range = mean_h_s_strong(1,(range_min:range_max)); 
+h_h_strong_P100Range = mean_h_h_strong(1,(range_min:range_max)); 
+h_n_strong_P100Range = mean_h_n_strong(1,(range_min:range_max)); 
+h_s_strong_P100Range = mean_h_s_strong(1,(range_min:range_max)); 
 
-s_h_strong_N170Range = mean_s_h_strong(1,(range_min:range_max)); 
-s_n_strong_N170Range = mean_s_n_strong(1,(range_min:range_max)); 
-s_s_strong_N170Range = mean_s_s_strong(1,(range_min:range_max)); 
+s_h_strong_P100Range = mean_s_h_strong(1,(range_min:range_max)); 
+s_n_strong_P100Range = mean_s_n_strong(1,(range_min:range_max)); 
+s_s_strong_P100Range = mean_s_s_strong(1,(range_min:range_max)); 
 
-n_h_strong_N170Range = mean_n_h_strong(1,(range_min:range_max)); 
-n_n_strong_N170Range = mean_n_n_strong(1,(range_min:range_max)); 
-n_s_strong_N170Range = mean_n_s_strong(1,(range_min:range_max)); 
+n_h_strong_P100Range = mean_n_h_strong(1,(range_min:range_max)); 
+n_n_strong_P100Range = mean_n_n_strong(1,(range_min:range_max)); 
+n_s_strong_P100Range = mean_n_s_strong(1,(range_min:range_max)); 
 
-%% Save N170
+%% Save P100
 % Bewusst 
-Erp.h_h_weak_N170 = min(h_h_weak_N170Range);
-Erp.h_n_weak_N170 = min(h_n_weak_N170Range);
-Erp.h_s_weak_N170 = min(h_s_weak_N170Range);
+Erp_P100.h_h_weak_P100 = max(h_h_weak_P100Range);
+Erp_P100.h_n_weak_P100 = max(h_n_weak_P100Range);
+Erp_P100.h_s_weak_P100 = max(h_s_weak_P100Range);
 
-Erp.s_h_weak_N170 = min(s_h_weak_N170Range);
-Erp.s_n_weak_N170 = min(s_n_weak_N170Range);
-Erp.s_s_weak_N170 = min(s_s_weak_N170Range);
+Erp_P100.s_h_weak_P100 = max(s_h_weak_P100Range);
+Erp_P100.s_n_weak_P100 = max(s_n_weak_P100Range);
+Erp_P100.s_s_weak_P100 = max(s_s_weak_P100Range);
 
-Erp.n_h_weak_N170 = min(n_h_weak_N170Range);
-Erp.n_n_weak_N170 = min(n_n_weak_N170Range);
-Erp.n_s_weak_N170 = min(n_s_weak_N170Range);
+Erp_P100.n_h_weak_P100 = max(n_h_weak_P100Range);
+Erp_P100.n_n_weak_P100 = max(n_n_weak_P100Range);
+Erp_P100.n_s_weak_P100 = max(n_s_weak_P100Range);
 
 % Unbewusst 
-Erp.h_h_strong_N170 = min(h_h_strong_N170Range);
-Erp.h_n_strong_N170 = min(h_n_strong_N170Range);
-Erp.h_s_strong_N170 = min(h_s_strong_N170Range);
+Erp_P100.h_h_strong_P100 = max(h_h_strong_P100Range);
+Erp_P100.h_n_strong_P100 = max(h_n_strong_P100Range);
+Erp_P100.h_s_strong_P100 = max(h_s_strong_P100Range);
 
-Erp.s_h_strong_N170 = min(s_h_strong_N170Range);
-Erp.s_n_strong_N170 = min(s_n_strong_N170Range);
-Erp.s_s_strong_N170 = min(s_s_strong_N170Range);
+Erp_P100.s_h_strong_P100 = max(s_h_strong_P100Range);
+Erp_P100.s_n_strong_P100 = max(s_n_strong_P100Range);
+Erp_P100.s_s_strong_P100 = max(s_s_strong_P100Range);
 
-Erp.n_h_strong_N170 = min(n_h_strong_N170Range);
-Erp.n_n_strong_N170 = min(n_n_strong_N170Range);
-Erp.n_s_strong_N170 = min(n_s_strong_N170Range);
+Erp_P100.n_h_strong_P100 = max(n_h_strong_P100Range);
+Erp_P100.n_n_strong_P100 = max(n_n_strong_P100Range);
+Erp_P100.n_s_strong_P100 = max(n_s_strong_P100Range);
 
 
 
@@ -272,89 +272,88 @@ mean_weak = mean(erp_epoch_weak([channel1,channel2,channel3,channel4],:),1);
 mean_strong = mean(erp_epoch_strong([channel1,channel2,channel3,channel4],:),1);
 
 % Save Erp
-Erp.h_weak = mean_h_weak;
-Erp.n_weak = mean_n_weak;
-Erp.s_weak = mean_s_weak;
-Erp.h_strong = mean_h_strong;
-Erp.n_strong = mean_n_strong;
-Erp.s_strong = mean_s_strong;
+Erp_P100.h_weak = mean_h_weak;
+Erp_P100.n_weak = mean_n_weak;
+Erp_P100.s_weak = mean_s_weak;
+Erp_P100.h_strong = mean_h_strong;
+Erp_P100.n_strong = mean_n_strong;
+Erp_P100.s_strong = mean_s_strong;
 
-Erp.happy = mean_h;
-Erp.neutral = mean_n;
-Erp.sad = mean_s;
+Erp_P100.happy = mean_h;
+Erp_P100.neutral = mean_n;
+Erp_P100.sad = mean_s;
 
-Erp.weak = mean_weak;
-Erp.strong = mean_strong;
+Erp_P100.weak = mean_weak;
+Erp_P100.strong = mean_strong;
         
     % Effects
-Erp.cons_effect = mean_weak-mean_strong;
-Erp.cons_effect_happy = mean_h_weak-mean_h_strong;
-Erp.cons_effect_neutral = mean_n_weak-mean_n_strong;
-Erp.cons_effect_sad = mean_s_weak-mean_s_strong;
+Erp_P100.cons_effect = mean_weak-mean_strong;
+Erp_P100.cons_effect_happy = mean_h_weak-mean_h_strong;
+Erp_P100.cons_effect_neutral = mean_n_weak-mean_n_strong;
+Erp_P100.cons_effect_sad = mean_s_weak-mean_s_strong;
 
-Erp.emotion_effect_happy_conscious =  mean_n_weak-mean_h_weak;
-Erp.emotion_effect_sad_conscious = mean_n_weak-mean_s_weak;
-Erp.emotion_effect_happy_unconscious = mean_n_strong-mean_h_strong;
-Erp.emotion_effect_sad_unconscious = mean_n_strong-mean_s_strong;
-
-
+Erp_P100.emotion_effect_happy_conscious =  mean_n_weak-mean_h_weak;
+Erp_P100.emotion_effect_sad_conscious = mean_n_weak-mean_s_weak;
+Erp_P100.emotion_effect_happy_unconscious = mean_n_strong-mean_h_strong;
+Erp_P100.emotion_effect_sad_unconscious = mean_n_strong-mean_s_strong;
 
 
-% Get range of N170
-h_weak_N170Range = mean_h_weak(1,(range_min:range_max));
-n_weak_N170Range = mean_n_weak(1,(range_min:range_max)); 
-s_weak_N170Range = mean_s_weak(1,(range_min:range_max)); 
-h_strong_N170Range = mean_h_strong(1,(range_min:range_max));
-n_strong_N170Range = mean_n_strong(1,(range_min:range_max)); 
-s_strong_N170Range = mean_s_strong(1,(range_min:range_max)); 
-
-happy_N170Range = mean_h(1,(range_min:range_max));
-neutral_N170Range = mean_n(1,(range_min:range_max)); 
-sad_N170Range = mean_s(1,(range_min:range_max)); 
-
-weak_N170Range = mean_weak(1,(range_min:range_max)); 
-strong_N170Range = mean_strong(1,(range_min:range_max));
-
-cons_effect_N170Range = Erp.cons_effect(1,(range_min:range_max)); 
-cons_effect_happy_N170Range = Erp.cons_effect_happy (1,(range_min:range_max)); 
-cons_effect_neutral_N170Range = Erp.cons_effect_neutral(1,(range_min:range_max)); 
-cons_effect_sad_N170Range = Erp.cons_effect_sad(1,(range_min:range_max)); 
-
-emotion_effect_happy_conscious_N170Range =  Erp.emotion_effect_happy_conscious(1,(range_min:range_max)); 
-emotion_effect_sad_conscious_N170Range = Erp.emotion_effect_sad_conscious(1,(range_min:range_max)); 
-emotion_effect_happy_unconscious_N170Range = Erp.emotion_effect_happy_unconscious(1,(range_min:range_max)); 
-emotion_effect_sad_unconscious_N170Range = Erp.emotion_effect_sad_unconscious(1,(range_min:range_max)); 
-
-% Save N170
-Erp.h_weak_N170 = min(h_weak_N170Range);
-Erp.n_weak_N170 = min(n_weak_N170Range);
-Erp.s_weak_N170 = min(s_weak_N170Range);
-Erp.h_strong_N170 = min(h_strong_N170Range);
-Erp.n_strong_N170 = min(n_strong_N170Range);
-Erp.s_strong_N170 = min(s_strong_N170Range);
-
-Erp.happy_N170 = min(happy_N170Range);
-Erp.neutral_N170 = min(neutral_N170Range);
-Erp.sad_N170 = min(sad_N170Range);
-
-Erp.weak_N170 = min(weak_N170Range);
-Erp.strong_N170 = min(strong_N170Range);
 
 
+% Get range of P100
+h_weak_P100Range = mean_h_weak(1,(range_min:range_max));
+n_weak_P100Range = mean_n_weak(1,(range_min:range_max)); 
+s_weak_P100Range = mean_s_weak(1,(range_min:range_max)); 
+h_strong_P100Range = mean_h_strong(1,(range_min:range_max));
+n_strong_P100Range = mean_n_strong(1,(range_min:range_max)); 
+s_strong_P100Range = mean_s_strong(1,(range_min:range_max)); 
+
+
+happy_P100Range = mean_h(1,(range_min:range_max));
+neutral_P100Range = mean_n(1,(range_min:range_max)); 
+sad_P100Range = mean_s(1,(range_min:range_max)); 
+
+weak_P100Range = mean_weak(1,(range_min:range_max)); 
+strong_P100Range = mean_strong(1,(range_min:range_max));
+
+cons_effect_P100Range = Erp_P100.cons_effect(1,(range_min:range_max)); 
+cons_effect_happy_P100Range = Erp_P100.cons_effect_happy (1,(range_min:range_max)); 
+cons_effect_neutral_P100Range = Erp_P100.cons_effect_neutral(1,(range_min:range_max)); 
+cons_effect_sad_P100Range = Erp_P100.cons_effect_sad(1,(range_min:range_max)); 
+
+emotion_effect_happy_conscious_P100Range =  Erp_P100.emotion_effect_happy_conscious(1,(range_min:range_max)); 
+emotion_effect_sad_conscious_P100Range = Erp_P100.emotion_effect_sad_conscious(1,(range_min:range_max)); 
+emotion_effect_happy_unconscious_P100Range = Erp_P100.emotion_effect_happy_unconscious(1,(range_min:range_max)); 
+emotion_effect_sad_unconscious_P100Range = Erp_P100.emotion_effect_sad_unconscious(1,(range_min:range_max)); 
+
+% Save P100
+Erp_P100.h_weak_P100 = min(h_weak_P100Range);
+Erp_P100.n_weak_P100 = min(n_weak_P100Range);
+Erp_P100.s_weak_P100 = min(s_weak_P100Range);
+Erp_P100.h_strong_P100 = min(h_strong_P100Range);
+Erp_P100.n_strong_P100 = min(n_strong_P100Range);
+Erp_P100.s_strong_P100 = min(s_strong_P100Range);
+
+Erp_P100.happy_P100= min(happy_P100Range);
+Erp_P100.neutral_P100 = min(neutral_P100Range);
+Erp_P100.sad_P100 = min(sad_P100Range);
+
+Erp_P100.weak_P100 = min(weak_P100Range);
+Erp_P100.strong_P100 = min(strong_P100Range);
 
     % Effects
-Erp.cons_effect_N170 = min(cons_effect_N170Range);
-Erp.cons_effect_happy_N170 = min(cons_effect_happy_N170Range);
-Erp.cons_effect_sad_N170 = min(cons_effect_neutral_N170Range);
-Erp.cons_effect_neutral_N170 = min(cons_effect_sad_N170Range);
+Erp_P100.cons_effect_P100 = min(cons_effect_P100Range);
+Erp_P100.cons_effect_happy_P100 = min(cons_effect_happy_P100Range);
+Erp_P100.cons_effect_sad_P100 = min(cons_effect_neutral_P100Range);
+Erp_P100.cons_effect_neutral_P100 = min(cons_effect_sad_P100Range);
 
-Erp.emotion_effect_happy_conscious_N170 = min(emotion_effect_happy_conscious_N170Range);
-Erp.emotion_effect_sad_conscious_N170 = min(emotion_effect_sad_conscious_N170Range);
-Erp.emotion_effect_happy_unconscious_N170 = min(emotion_effect_happy_unconscious_N170Range);
-Erp.emotion_effect_sad_unconscious_N170 = min(emotion_effect_sad_unconscious_N170Range);
+Erp_P100.emotion_effect_happy_conscious_P100 = min(emotion_effect_happy_conscious_P100Range);
+Erp_P100.emotion_effect_sad_conscious_P100 = min(emotion_effect_sad_conscious_P100Range);
+Erp_P100.emotion_effect_happy_unconscious_P100 = min(emotion_effect_happy_unconscious_P100Range);
+Erp_P100.emotion_effect_sad_unconscious_P100 = min(emotion_effect_sad_unconscious_P100Range);
 
 % Zum Plotten
-Erp.times = EEG.times;
+Erp_P100.times = EEG.times;
 
 
 
