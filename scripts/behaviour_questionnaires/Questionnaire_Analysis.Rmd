@@ -52,12 +52,9 @@ data <- read_excel("/Users/julia/Desktop/Git/EEGfMRIStudy/data/BackwardMask_Ques
 head(data)
 ```
 
-
 # FB Analysis
 
-
-## Rename Questionnaires 
-
+## Rename Questionnaires
 
 ```{r}
 
@@ -101,9 +98,10 @@ colnames(data)[colnames(data) == "DigitSpan_Backwards_Total Score"] ="Digit_back
 tibble(data)
 ```
 
-
 ## take only columns i need
+
 # Transform data
+
 ```{r}
 
 d_FB <- data[c('Group_MDD1_HC2', "BVAQ", "WMS", "TMT_A", "TMT_B", "STAI1", "STAI2",
@@ -112,7 +110,6 @@ d_FB <- data[c('Group_MDD1_HC2', "BVAQ", "WMS", "TMT_A", "TMT_B", "STAI1", "STAI
              "CERQ_positive_reappraisal", "CERQ_putting_into_perspective", "CERQ_catastrophizing", "CERQ_blaming_others",
              "Digit_forward_span", "Digit_forward_score", "Digit_backward_span", "Digit_backward_score")]
 ```
-
 
 ## remove rows with missing values
 
@@ -127,11 +124,9 @@ dim(data_FB_clean)
 
 ```
 
-
 # Perform MANOVA
 
 If you have multiple questionnaires and want to compare the sum scores between two groups while controlling for multiple comparisons, you can use a multivariate approach such as a multivariate analysis of variance (MANOVA) or a permutation-based approach.
-
 
 ```{r}
 # Assuming 'manova_out' is the result object from your MANOVA analysis
@@ -152,8 +147,6 @@ dependent_vars <- c("BVAQ", "WMS", "TMT_A", "TMT_B", "STAI1", "STAI2",
                     "Digit_forward_span", "Digit_forward_score", "Digit_backward_span", "Digit_backward_score")
 
 ```
-
-
 
 ```{r}
 # Load required libraries
@@ -190,8 +183,6 @@ results$Adjusted_P_Value <- p.adjust(results$P_Value, method = "bonferroni")
 print(results)
 
 ```
-
-
 
 ```{r}
 # Load required libraries
@@ -269,8 +260,6 @@ print(results)
 
 ```
 
-
-
 # Plot data
 
 ```{r}
@@ -324,7 +313,6 @@ d_BDI <- d_BDI %>%
 
 ```
 
-
 ```{r fig.width=2,fig.height=3}
 # Create the violin plot
 
@@ -335,8 +323,6 @@ ggplot(d_BDI, aes(x = Group_MDD1_HC2, y = BDI, fill = Group_MDD1_HC2)) +
   theme_bw()
 
 ```
-
-
 
 ```{r}
 pairwise_results <- t.test(d_BDI$BDI ~ d_BDI$Group_MDD1_HC2, paired = FALSE)
@@ -373,4 +359,3 @@ print("\nStandard Error:")
 print(se)
 
 ```
-

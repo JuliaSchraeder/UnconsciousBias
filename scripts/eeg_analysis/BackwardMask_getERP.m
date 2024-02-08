@@ -308,6 +308,10 @@ h_strong_N170Range = mean_h_strong(1,(range_min:range_max));
 n_strong_N170Range = mean_n_strong(1,(range_min:range_max)); 
 s_strong_N170Range = mean_s_strong(1,(range_min:range_max)); 
 
+happy_N170Range = mean_h(1,(range_min:range_max));
+neutral_N170Range = mean_n(1,(range_min:range_max)); 
+sad_N170Range = mean_s(1,(range_min:range_max)); 
+
 weak_N170Range = mean_weak(1,(range_min:range_max)); 
 strong_N170Range = mean_strong(1,(range_min:range_max));
 
@@ -329,8 +333,14 @@ Erp.h_strong_N170 = min(h_strong_N170Range);
 Erp.n_strong_N170 = min(n_strong_N170Range);
 Erp.s_strong_N170 = min(s_strong_N170Range);
 
+Erp.happy_N170 = min(happy_N170Range);
+Erp.neutral_N170 = min(neutral_N170Range);
+Erp.sad_N170 = min(sad_N170Range);
+
 Erp.weak_N170 = min(weak_N170Range);
 Erp.strong_N170 = min(strong_N170Range);
+
+
 
     % Effects
 Erp.cons_effect_N170 = min(cons_effect_N170Range);
