@@ -5,7 +5,7 @@ output:
     df_print: paged
 ---
 
-### Load Libraries
+# Import Packages
 
 ```{r}
 library(readxl) # read excel
@@ -21,16 +21,15 @@ library(ggplot2)
 library(afex)
 ```
 
-### Import Data set
+# Load dataset
 
 ```{r}
-data <- read_excel("Path/regressors_10_Cluster_MixedModel.xlsx", 
+data <- read_excel("C:/Users/juhoffmann/Desktop/Git/UnconsciousBias/data/regressors_10_Cluster_MixedModel.xlsx", 
     col_types = c("numeric", "numeric", "text", "text", "numeric", "numeric", "numeric", "numeric", "numeric"))
 
 head(data)
 ```
 
-### Look at data
 
 ```{r}
 data <- data
@@ -38,7 +37,29 @@ plot(density(data$Cluster_value),main="Cluster Value Density estimate of data")
 
 ```
 
-### Factorize variables
+
+# Check for distribution type
+
+```{r}
+x <- data$Cluster_value+100
+den <- density(x)
+dat <- data.frame(x = den$x, y = den$y) 
+
+#Fit distributions
+library(fitdistrplus)
+fit.weibull <- fitdist(x, "weibull")
+fit.normal <- fitdist(x,"norm")
+fit.gamma <- fitdist(x, "gamma", lower = c(0, 0))
+
+# Compare fits graphically
+plot.legend <- c("Weibull", "Gamma","Normal")
+par(mfrow = c(2, 2)) #show 4 pictures
+denscomp(list(fit.weibull, fit.gamma, fit.normal), fitcol = c("red", "blue","green"), legendtext = plot.legend)
+qqcomp(list(fit.weibull, fit.gamma, fit.normal), fitcol = c("red", "blue","green"), legendtext = plot.legend)
+cdfcomp(list(fit.weibull, fit.gamma, fit.normal), fitcol = c("red", "blue","green"), legendtext = plot.legend)
+ppcomp(list(fit.weibull, fit.gamma, fit.normal), fitcol = c("red", "blue","green"), legendtext = plot.legend)
+```
+## factorise variables
 
 ```{r}
 data <- data%>%
@@ -50,7 +71,8 @@ data <- data%>%
 
 ```
 
-### Estimate model
+
+## estimate model
 
 ```{r}
 Model <- lmer(Cluster_value ~ group*emotion*consciousness + gender + cluster_number 
@@ -60,14 +82,12 @@ anova_Model<-anova(Model, type = 3, ddf= "Kenward-Roger")
 anova_Model
 ```
 
-
 ```{r}
 sjPlot::tab_model(Model)
 sjPlot::plot_model(Model, type = "diag")
 ```
 
-
-#### Post Hoc tests
+## Post Hoc tests
 
 ```{r}
 eff.cluster       <- emmeans(Model, pairwise ~ cluster_number,adjust ="bonferroni")
@@ -80,8 +100,7 @@ eff.cluster
 eff.consciousness
 ```
 
-
-### Plot
+## plot effects
 
 ```{r}
 cluster <-  afex_plot(Model, x = "cluster_number", 
@@ -113,12 +132,9 @@ conscious<-  afex_plot(Model, x = "consciousness",
 cluster
 ```
 
-
-
 ```{r}
 conscious
 ```
-
 
 ```{r}
 # Combine plots into a grid
@@ -128,4 +144,20 @@ combined_plots1 <- cowplot::plot_grid(cluster, conscious,
 
 # Display the combined plots
 print(combined_plots1)
+```
+
+
+
+
+# Calculate alternative models with less interactions
+
+```{r}
+Model.c <- lmer(Cluster_value ~ consciousness*emotion 
+                + consciousness*group 
+                + emotion*group
+                + gender + cluster_number 
+                       + (1|bids_number),
+                       data = data)
+anova_Model<-anova(Model.c, type = 3, ddf= "Kenward-Roger")
+anova_Model
 ```

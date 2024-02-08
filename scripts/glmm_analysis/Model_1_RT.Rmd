@@ -4,10 +4,8 @@ output: html_document
 date: "2023-08-14"
 ---
 
+# Import Packages
 
-
-
-## Import Packages
 ```{r}
 library(lme4)         # mixed model package
 library(lmerTest)     # library providing p-values for mixed models in lme4
@@ -26,10 +24,12 @@ library(readxl)
 library(readr)
 ```
 
-## load dataset
+# Load dataset
+
+Gender: 2=men, 1=women
 
 ```{r}
-data <- read_excel("/Users/julia/Desktop/Git/EEGfMRIStudy/data/BackwardMask_Mean_RT_Long.xlsx", 
+data <- read_excel("C:/Users/juhoffmann/Desktop/Git/UnconsciousBias/data/BackwardMask_Mean_RT_Long.xlsx", 
                  col_types = c("text", "text", "text", 
          "text", "text", "text", "numeric", 
          "numeric", "numeric", "numeric", "numeric", 
@@ -52,6 +52,31 @@ data <- read_excel("/Users/julia/Desktop/Git/EEGfMRIStudy/data/BackwardMask_Mean
 head(data)
 ```
 
+# Check for distribution type
+
+```{r}
+x <- data$RT+100
+den <- density(x)
+dat <- data.frame(x = den$x, y = den$y) 
+
+#Fit distributions
+library(fitdistrplus)
+fit.weibull <- fitdist(x, "weibull")
+fit.normal <- fitdist(x,"norm")
+fit.gamma <- fitdist(x, "gamma", lower = c(0, 0))
+
+# Compare fits graphically
+plot.legend <- c("Weibull", "Gamma","Normal")
+par(mfrow = c(2, 2)) #show 4 pictures
+denscomp(list(fit.weibull, fit.gamma, fit.normal), fitcol = c("red", "blue","green"), legendtext = plot.legend)
+qqcomp(list(fit.weibull, fit.gamma, fit.normal), fitcol = c("red", "blue","green"), legendtext = plot.legend)
+cdfcomp(list(fit.weibull, fit.gamma, fit.normal), fitcol = c("red", "blue","green"), legendtext = plot.legend)
+ppcomp(list(fit.weibull, fit.gamma, fit.normal), fitcol = c("red", "blue","green"), legendtext = plot.legend)
+
+
+```
+
+--\> choose normal distribution from visual checking
 
 
 ```{r}
@@ -59,8 +84,8 @@ df <- data[c("RT",'Group_MDD1_HC2', "Gender_f1_m2", "name", "condition", "primer
             "congruence", "consciousness", "Alter")]
 ```
 
-
 ## factorize variables
+
 ```{r}
 df$name                     <- factor(df$name, ordered = FALSE)
 df$consciousness            <- factor(df$consciousness, ordered = FALSE)
@@ -71,8 +96,8 @@ df$Gender_f1_m2             <- factor(df$Gender_f1_m2, ordered = FALSE)
 df$Group_MDD1_HC2           <- factor(df$Group_MDD1_HC2, ordered = FALSE)
 ```
 
-
 ## estimate model
+
 ```{r}
 Model <- lmer(RT ~ consciousness*primer_emotion*Group_MDD1_HC2 
               + target_emotion*Group_MDD1_HC2 
@@ -82,6 +107,7 @@ Model <- lmer(RT ~ consciousness*primer_emotion*Group_MDD1_HC2
               data = df)
 ```
 
+
 ```{r}
 sjPlot:: tab_model(Model)
 ```
@@ -90,13 +116,13 @@ sjPlot:: tab_model(Model)
 sjPlot::plot_model(Model, type = "diag")
 ```
 
-
 ```{r}
 anova <-anova(Model, type = 3, ddf= "Kenward-Roger")
 print(anova)
 ```
 
 ## Post Hoc tests
+
 ```{r}
 eff.primer        <- emmeans(Model, pairwise ~ primer_emotion,adjust ="bonferroni")
 eff.target        <- emmeans(Model, pairwise ~ target_emotion,adjust ="bonferroni")
@@ -105,6 +131,7 @@ eff.group         <- emmeans(Model, pairwise ~ Group_MDD1_HC2)
 eff.consciousness <- emmeans(Model, pairwise ~ consciousness)
 eff.group_target  <- emmeans(Model, pairwise ~ Group_MDD1_HC2:target_emotion,adjust ="bonferroni")
 ```
+
 ```{r}
 eff.primer
 eff.target
@@ -114,9 +141,8 @@ eff.group
 eff.group_target
 ```
 
+## Plot effects
 
-
-## Plot
 ```{r}
 # Load necessary packages
 library(ggplot2)
@@ -150,15 +176,12 @@ apa_plot <- function(df) {
 apa_plot(coef_df)
 ```
 
-
-
 ```{r}
 library(afex)     
 library(cowplot)
 #library(sjPlot)
 library(ggpubr)
 ```
-
 
 ```{r}
 effect_plots<-cowplot::plot_grid( 
@@ -237,9 +260,38 @@ effect_plots<-cowplot::plot_grid(
 ) 
 
 ```
+
 ```{r}
 ggsave("path/GLMM_RT.tiff", effect_plots, width = 5.5, height = 7)
 
 print(effect_plots)
 ```
 
+
+
+
+# Calculate alternative models with less interactions
+
+```{r}
+Model.a <- lmer(RT ~ consciousness*primer_emotion 
+                + consciousness*Group_MDD1_HC2 
+                + primer_emotion*Group_MDD1_HC2 
+              + target_emotion*Group_MDD1_HC2 
+              + Gender_f1_m2 
+              + Alter #age
+              + (1|name),
+              data = df)
+```
+
+```{r}
+sjPlot:: tab_model(Model.a)
+```
+
+```{r}
+sjPlot::plot_model(Model.a, type = "diag")
+```
+
+```{r}
+anova <-anova(Model.a, type = 3, ddf= "Kenward-Roger")
+print(anova)
+```

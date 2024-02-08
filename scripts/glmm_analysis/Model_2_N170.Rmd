@@ -6,8 +6,7 @@ output:
   word_document: default
 ---
 
-
-# First load packages: 
+# Import Packages
 
 ```{r}
 library(lme4)         # mixed model package
@@ -25,15 +24,14 @@ library(readr)        # save files
 library(afex)         # plot effects
 ```
 
-
-# Load the dataset:
+# Load dataset
 
 Gender: 2=men, 1=women
+
 ```{r}
-data <- read_excel("path/erp_N170_HC_and_MDD.xlsx")
+data <- read_excel("C:/Users/juhoffmann/Desktop/Git/UnconsciousBias/data/erp_N170_HC_and_MDD.xlsx")
 head(data)
 ```
-
 
 ```{r}
 plot(density(data$N170),main="Density estimate of data")
@@ -62,11 +60,10 @@ ppcomp(list(fit.weibull, fit.gamma, fit.normal), fitcol = c("red", "blue","green
 
 
 ```
---> choose normal distribution from visual checking
 
+--\> choose normal distribution from visual checking
 
-
-# Factorise variables
+## factorise variables
 
 ```{r}
 data$mask[data$mask == "bewusst"] <- "conscious"
@@ -78,10 +75,9 @@ data$group             <- factor(data$group, ordered = FALSE)
 data$gender            <- factor(data$Gender_f1_m2, ordered = FALSE)
 ```
 
+## estimate model
 
-# Check out models
-
-time -> primer consciousness 
+time -\> primer consciousness
 
 ```{r}
 Model <- lmer(N170 ~ consciousness*primer_emotion*group 
@@ -91,7 +87,6 @@ Model <- lmer(N170 ~ consciousness*primer_emotion*group
               data=data)
 ```
 
-
 ```{r}
 sjPlot::tab_model(Model)
 ```
@@ -100,7 +95,6 @@ sjPlot::tab_model(Model)
 sjPlot::plot_model(Model, type = "diag")
 ```
 
-
 ```{r}
 anova<-anova(Model, type = 3, ddf= "Kenward-Roger")
 print(anova)
@@ -108,13 +102,13 @@ print(anova)
 
 ## Post Hoc tests
 
-
 ```{r}
 eff.primer        <- emmeans(Model, pairwise ~ primer_emotion,adjust ="bonferroni")
 eff.gender        <- emmeans(Model, pairwise ~ gender)
 eff.consciousness <- emmeans(Model, pairwise ~ consciousness)
 eff.age           <- cor.test(data$N170,data$age, method="spearman")
 ```
+
 ```{r}
 eff.consciousness
 eff.primer
@@ -122,9 +116,7 @@ eff.gender
 eff.age 
 ```
 
-
-
-# Plot effects
+## plot effects
 
 ```{r}
 primer <-  afex_plot(Model, x = "primer_emotion", 
@@ -169,7 +161,6 @@ age<- ggplot(data, aes(x = age, y = N170)) +
   labs(x = "age", y ="N170")
 ```
 
-
 ```{r}
 # Combine plots into a grid
 combined_plots <- cowplot::plot_grid(primer, conscious, gender, age,
@@ -179,4 +170,40 @@ combined_plots <- cowplot::plot_grid(primer, conscious, gender, age,
 # Display the combined plots
 print(combined_plots)
 ggsave("Path/GLMM_N170.tiff", combined_plots, width = 6, height = 7)
+```
+
+
+
+
+# Calculate alternative models with less interactions
+
+```{r}
+Model.b <- lmer(N170 ~ consciousness*primer_emotion 
+                + consciousness*group 
+                + primer_emotion*group  
+              + gender 
+              + age
+              + (1|name),
+              data=data)
+```
+
+```{r}
+sjPlot::tab_model(Model.b)
+```
+
+```{r}
+sjPlot::plot_model(Model.b, type = "diag")
+```
+
+```{r}
+anova<-anova(Model.b, type = 3, ddf= "Kenward-Roger")
+print(anova)
+```
+
+
+
+```{r}
+Model.b.2 <- lmer(N170 ~ gender*group + age*group
+              + (1|name),
+              data=data)
 ```
