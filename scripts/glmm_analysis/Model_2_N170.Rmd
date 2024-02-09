@@ -201,9 +201,15 @@ print(anova)
 ```
 
 
-
+# Post Hoc test: effect of age*group and sex*group on N170
 ```{r}
 Model.b.2 <- lmer(N170 ~ gender*group + age*group
               + (1|name),
               data=data)
 ```
+
+```{r}
+anova<-anova(Model.b.2, type = 3, ddf= "Kenward-Roger")
+print(anova)
+```
+

@@ -536,7 +536,7 @@ data$gender            <- factor(data$Gender_f1_m2, ordered = FALSE)
 ```
 
 ```{r}
-Model8 <- lmer(N170 ~ consciousness*primer_emotion
+Model8 <- lmer(N170 ~ consciousness*primer_emotion*group
                           + gender 
                           + age
                           + Slope
