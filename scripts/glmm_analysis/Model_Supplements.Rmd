@@ -556,3 +556,35 @@ sjPlot::plot_model(Model8, type = "diag")
 anova<-anova(Model8, type = 3, ddf= "Kenward-Roger")
 print(anova)
 ```
+
+
+## Model 9: Effect of Demographics on Neurophysiological data
+
+
+Gender: 2=men, 1=women
+
+```{r}
+data <- read_excel("C:/Users/juhoffmann/Desktop/Git/UnconsciousBias/data/erp_N170_HC_and_MDD.xlsx")
+head(data)
+```
+
+```{r}
+data$mask[data$mask == "bewusst"] <- "conscious"
+data$mask[data$mask == "unbewusst"] <- "unconscious"
+data$name              <- factor(data$subName, ordered = FALSE)
+data$consciousness     <- factor(data$mask, ordered = FALSE)
+data$primer_emotion    <- factor(data$emotion, ordered = FALSE)
+data$group             <- factor(data$group, ordered = FALSE)
+data$gender            <- factor(data$Gender_f1_m2, ordered = FALSE)
+```
+
+```{r}
+Model9 <- lmer(N170 ~ gender*group + age*group
+              + (1|name),
+              data=data)
+```
+
+```{r}
+anova<-anova(Model9, type = 3, ddf= "Kenward-Roger")
+print(anova)
+```
