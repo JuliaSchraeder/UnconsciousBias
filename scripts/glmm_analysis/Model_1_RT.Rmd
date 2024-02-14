@@ -78,7 +78,6 @@ ppcomp(list(fit.weibull, fit.gamma, fit.normal), fitcol = c("red", "blue","green
 
 --\> choose normal distribution from visual checking
 
-
 ```{r}
 df <- data[c("RT",'Group_MDD1_HC2', "Gender_f1_m2", "name", "condition", "primer_emotion", "target_emotion",
             "congruence", "consciousness", "Alter")]
@@ -106,7 +105,6 @@ Model <- lmer(RT ~ consciousness*primer_emotion*Group_MDD1_HC2
               + (1|name),
               data = df)
 ```
-
 
 ```{r}
 sjPlot:: tab_model(Model)
@@ -266,9 +264,6 @@ ggsave("path/GLMM_RT.tiff", effect_plots, width = 5.5, height = 7)
 
 print(effect_plots)
 ```
-
-
-
 
 # Calculate alternative models with less interactions
 

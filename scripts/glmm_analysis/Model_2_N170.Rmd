@@ -172,9 +172,6 @@ print(combined_plots)
 ggsave("Path/GLMM_N170.tiff", combined_plots, width = 6, height = 7)
 ```
 
-
-
-
 # Calculate alternative models with less interactions
 
 ```{r}
@@ -199,6 +196,3 @@ sjPlot::plot_model(Model.b, type = "diag")
 anova<-anova(Model.b, type = 3, ddf= "Kenward-Roger")
 print(anova)
 ```
-
-
-
