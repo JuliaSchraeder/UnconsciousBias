@@ -48,10 +48,9 @@ Using either images of the same (no-conflict) or different (conflict) emotional 
 
 ## Technologies
 Project is created with:
-* PsychoPy3: Version v2020.2.4
-* RStudio: version 2023.06.1
+* PsychoPy3 version v2020.2.4
+* RStudio version 2023.06.1
 * Python 3
 * GraphPad Prism 10.0.2.
 * Matlab version 2020b
-
-
+* EEGLAB Version 2022.1
