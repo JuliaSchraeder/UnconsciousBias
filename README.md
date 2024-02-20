@@ -8,6 +8,7 @@
 * [Experimental design](#experimental-design)
 * [Folder descripion](#folder-description)
 * [Technologies](#technologies)
+* [Acknowledgement](#acknowledgement)
 
 
 ## General info
@@ -20,7 +21,7 @@ Julia Schräder 1,2, Lennard Herzberg 1, Han-Gue Jo 3, Lucia Hernandez-Pena 1,2,
 
 * <sub><sup>1 Department of Psychiatry, Psychotherapy and Psychosomatics, Medical Faculty, Uniklinik RWTH Aa-chen University, Pauwelstraße 30, 52074 Aachen, Germany</sup></sub>
 * <sub><sup>2 Institute of Neuroscience and Medicine: JARA-Institute Brain Structure Function Relationship (INM 10), Research Center Jülich, Jülich, Germany</sup></sub>
-* <sub><sup>3 School of Computer Information and Communication Engineering, Kunsan National University, Gun-san, Korea</sup></sub>
+* <sub><sup>3 School of Computer SoftwareInformation and Communication Engineering, Kunsan National University, 588 Daehak-ro Gunsan, South Korea</sup></sub>
 
 
 #### OSF 
@@ -53,4 +54,7 @@ Project is created with:
 * Python 3
 * GraphPad Prism 10.0.2.
 * Matlab version 2020b
-* EEGLAB Version 2022.1
+* EEGLAB version 2022.1
+
+## Acknowledgement
+This study was supported by the Brain Imaging Facility of the Interdisciplinary Center for Clinical Research within the Faculty of Medicine at the RWTH Aachen University and the International Research Training Group (IRTG2150). This study was funded by the Deutsche Forschungsgemeinschaft (DFG, German Research Foundation) 667892/JO 1453/2-1 and the International Research Training Group (IRTG2150) —269953372/GRK2150. This work was also supported by the FZJ-NST Bilateral Cooperation Program funded by the Forschungszentrum Jülich and the National Research Council of Science & Technology (Global-22-001). 
