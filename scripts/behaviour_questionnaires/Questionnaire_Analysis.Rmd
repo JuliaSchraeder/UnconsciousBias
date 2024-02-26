@@ -30,7 +30,7 @@ library(ggplot2)
 # Import Dataset
 
 ```{r}
-data <- read_excel("/Users/julia/Desktop/Git/EEGfMRIStudy/data/BackwardMask_Questionnaire_Results.xlsx", 
+data <- read_excel("C:/Users/juhoffmann/Desktop/Git/UnconsciousBias/data/BackwardMask_Questionnaire_Results.xlsx", 
                  col_types = c("text", 
          "numeric", "numeric", "numeric", 
          "numeric", "numeric", "numeric", "numeric",  
@@ -259,6 +259,72 @@ print(results)
 
 
 ```
+# Calculate Cohens d!
+
+
+```{r}
+library(dplyr)
+
+data <- data_FB_clean
+# Function to calculate Cohen's d
+cohens_d <- function(group1, group2) {
+  n1 <- length(group1)
+  n2 <- length(group2)
+  sd1 <- sd(group1)
+  sd2 <- sd(group2)
+  pooled_sd <- sqrt(((n1 - 1) * sd1^2 + (n2 - 1) * sd2^2) / (n1 + n2 - 2))
+  if(pooled_sd == 0) { # Avoid division by zero
+    return(NA)
+  }
+  d <- (mean(group1) - mean(group2)) / pooled_sd
+  return(d)
+}
+
+# Function to calculate Standard Error (SE)
+calculate_se <- function(group1, group2) {
+  n1 <- length(group1)
+  n2 <- length(group2)
+  sd1 <- sd(group1)
+  sd2 <- sd(group2)
+  se <- sqrt(sd1^2 / n1 + sd2^2 / n2)
+  return(se)
+}
+
+# Specify the questionnaire variables you want to analyze
+variables <- c("BVAQ", "WMS", "TMT_A", "TMT_B", "STAI1", "STAI2",
+                    "DERS_sum_score", "DERS_non_acceptance", "DERS_goals", "DERS_impulse", "DERS_awareness", "DERS_strategies",
+               "DERS_clarity","CERQ_self_blame", "CERQ_acceptance", "CERQ_rumination", "CERQ_positive_reinforcement",
+               "CERQ_refocus_on_planning","CERQ_positive_reappraisal", "CERQ_putting_into_perspective", "CERQ_catastrophizing",
+               "CERQ_blaming_others","Digit_forward_span", "Digit_forward_score", "Digit_backward_span", "Digit_backward_score")
+
+# Perform calculations
+results <- lapply(variables, function(var) {
+  group1 <- data %>% filter(Group_MDD1_HC2 == 1) %>% pull(!!sym(var))
+  group2 <- data %>% filter(Group_MDD1_HC2 == 2) %>% pull(!!sym(var))
+  t_test_result <- t.test(group1, group2, paired = FALSE, var.equal = FALSE)
+  
+  cohens_d_value <- cohens_d(group1, group2)
+  se <- calculate_se(group1, group2)
+  
+  data.frame(
+    Variable = var,
+    P_Value = t_test_result$p.value,
+    T_Value = unname(t_test_result$statistic),
+    Cohens_D = cohens_d_value,
+    SE = se
+  )
+}) %>% bind_rows()
+
+# Display the results
+print(results)
+
+
+```
+
+
+
+
+
 
 # Plot data
 
@@ -284,7 +350,7 @@ ggplot(d_FB_long, aes(x = variable, y = value, fill = Group_MDD1_HC2)) +
 # Plot BDI
 
 ```{r}
-data <- read_excel("/Users/julia/Desktop/Git/EEGfMRIStudy/data/BackwardMask_Questionnaire_Results.xlsx", 
+data <- read_excel("C:/Users/juhoffmann/Desktop/Git/UnconsciousBias/data/BackwardMask_Questionnaire_Results.xlsx", 
                  col_types = c("text", 
          "numeric", "numeric", "numeric", 
          "numeric", "numeric", "numeric", "numeric",  
