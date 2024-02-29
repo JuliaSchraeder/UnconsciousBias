@@ -1,26 +1,25 @@
 # Unconscious Bias in Major Depressive Disorder: EEG-fMRI Study
 
-## Table of contents
-* [General info](#general-info)
-	* [Authors](#authors) 
-	* [Publication](#OSF) 
-	* [License](#license)
-* [Experimental design](#experimental-design)
-* [Folder descripion](#folder-description)
-* [Technologies](#technologies)
-
-
-## General info
-This study is about the perception of emotional stimuli presented at an unconscious level in a sample of 66 healthy individuals and patients 60 with major depressive disorder. To examine the neurophysiological pathway of biased unconscious emotion processing in depression, simultaneous EEG-fMRI measures are applied focusing on the event-related potential for facial expressions (N170) for predicting the presence of unconscious cognitive biases in depressed individuals.
-A modified backward mask priming task was conducted utilizing simultaneous EEG-fRMI measurement involving presentation of facial expressions (happy, sad, neutral). Priming prior to a target emotion created distinct emotional trials: unconscious (16.7 ms primer duration) and conscious (150 ms primer duration) with either congruency or incongruency of emotions between primer and target. 
-
-
 #### AUTHORS
 Julia Schräder 1,2, Lennard Herzberg 1, Han-Gue Jo 3, Lucia Hernandez-Pena 1,2, Julia Koch 1,2,, Ute Habel 1,2, Lisa Wagels 1,2
 
 * <sub><sup>1 Department of Psychiatry, Psychotherapy and Psychosomatics, Medical Faculty, Uniklinik RWTH Aa-chen University, Pauwelstraße 30, 52074 Aachen, Germany</sup></sub>
 * <sub><sup>2 Institute of Neuroscience and Medicine: JARA-Institute Brain Structure Function Relationship (INM 10), Research Center Jülich, Jülich, Germany</sup></sub>
-* <sub><sup>3 School of Computer Information and Communication Engineering, Kunsan National University, Gun-san, Korea</sup></sub>
+* <sub><sup>3 School of Computer SoftwareInformation and Communication Engineering, Kunsan National University, 588 Daehak-ro Gunsan, South Korea</sup></sub>
+
+## Table of contents
+* [General info](#general-info)
+	* [Publication](#OSF) 
+	* [License](#license)
+* [Experimental design](#experimental-design)
+* [Folder descripion](#folder-description)
+* [Technologies](#technologies)
+* [Acknowledgement](#acknowledgement)
+
+
+## General info
+This study is about the perception of emotional stimuli presented at an unconscious level in a sample of 66 healthy individuals and patients 60 with major depressive disorder. To examine the neurophysiological pathway of biased unconscious emotion processing in depression, simultaneous EEG-fMRI measures are applied focusing on the event-related potential for facial expressions (N170) for predicting the presence of unconscious cognitive biases in depressed individuals.
+A modified backward mask priming task was conducted utilizing simultaneous EEG-fRMI measurement involving presentation of facial expressions (happy, sad, neutral). Priming prior to a target emotion created distinct emotional trials: unconscious (16.7 ms primer duration) and conscious (150 ms primer duration) with either congruency or incongruency of emotions between primer and target. 
 
 
 #### OSF 
@@ -48,10 +47,12 @@ Using either images of the same (no-conflict) or different (conflict) emotional 
 
 ## Technologies
 Project is created with:
-* PsychoPy3: Version v2020.2.4
-* RStudio: version 2023.06.1
+* PsychoPy3 version v2020.2.4
+* RStudio version 2023.06.1
 * Python 3
 * GraphPad Prism 10.0.2.
 * Matlab version 2020b
+* EEGLAB version 2022.1
 
-
+## Acknowledgement
+This study was supported by the Brain Imaging Facility of the Interdisciplinary Center for Clinical Research within the Faculty of Medicine at the RWTH Aachen University and the International Research Training Group (IRTG2150). This study was funded by the Deutsche Forschungsgemeinschaft (DFG, German Research Foundation) 667892/JO 1453/2-1 and the International Research Training Group (IRTG2150) —269953372/GRK2150. This work was also supported by the FZJ-NST Bilateral Cooperation Program funded by the Forschungszentrum Jülich and the National Research Council of Science & Technology (Global-22-001). 

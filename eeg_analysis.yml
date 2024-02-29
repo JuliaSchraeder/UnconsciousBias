@@ -1,5 +1,0 @@
-name: eeg_analysis
-channels:
-  - conda-forge
-  - defaults
-prefix: C:\Users\juhoffmann\Anaconda3\envs\eeg_analysis
