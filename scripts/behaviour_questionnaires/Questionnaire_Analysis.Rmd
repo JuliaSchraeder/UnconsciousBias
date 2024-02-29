@@ -30,7 +30,8 @@ library(ggplot2)
 # Import Dataset
 
 ```{r}
-data <- read_excel("C:/Users/juhoffmann/Desktop/Git/UnconsciousBias/data/BackwardMask_Questionnaire_Results.xlsx", 
+#"C:/Users/juhoffmann/Desktop/Git/UnconsciousBias/data/BackwardMask_Questionnaire_Results.xlsx
+data <- read_excel("/Users/julia/Desktop/Git/EEGfMRIStudy/UnconsciousBias/data/BackwardMask_Questionnaire_Results.xlsx", 
                  col_types = c("text", 
          "numeric", "numeric", "numeric", 
          "numeric", "numeric", "numeric", "numeric",  
@@ -350,7 +351,7 @@ ggplot(d_FB_long, aes(x = variable, y = value, fill = Group_MDD1_HC2)) +
 # Plot BDI
 
 ```{r}
-data <- read_excel("C:/Users/juhoffmann/Desktop/Git/UnconsciousBias/data/BackwardMask_Questionnaire_Results.xlsx", 
+data <- read_excel("/Users/julia/Desktop/Git/EEGfMRIStudy/UnconsciousBias/data/BackwardMask_Questionnaire_Results.xlsx", 
                  col_types = c("text", 
          "numeric", "numeric", "numeric", 
          "numeric", "numeric", "numeric", "numeric",  
