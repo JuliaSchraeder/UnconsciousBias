@@ -149,124 +149,12 @@ dependent_vars <- c("BVAQ", "WMS", "TMT_A", "TMT_B", "STAI1", "STAI2",
 
 ```
 
-```{r}
-# Load required libraries
-#library(tidyverse)
-library(multcomp)
-
-# Read the Excel sheet (assuming your data is in a sheet named "Sheet1")
-data <- data_FB_clean
-# Specify the questionnaire variables
-dependent_vars <- c("BVAQ", "WMS", "TMT_A", "TMT_B", "STAI1", "STAI2",
-                    "DERS_sum_score", "DERS_non_acceptance", "DERS_goals", "DERS_impulse", "DERS_awareness", "DERS_strategies", "DERS_clarity",
-                    "CERQ_self_blame", "CERQ_acceptance", "CERQ_rumination", "CERQ_positive_reinforcement", "CERQ_refocus_on_planning",
-                    "CERQ_positive_reappraisal", "CERQ_putting_into_perspective", "CERQ_catastrophizing", "CERQ_blaming_others",
-                    "Digit_forward_span", "Digit_forward_score", "Digit_backward_span", "Digit_backward_score")
-
-# Perform paired t-tests with Bonferroni correction
-results <- purrr::map_df(dependent_vars, ~ {
-  var_name <- as.character(.x)
-  t_test_result <- t.test(data[[var_name]] ~ data$Group_MDD1_HC2, paired = FALSE)
-  p_value <- t_test_result$p.value
-  t_value <- t_test_result$statistic
-  
-  data.frame(
-    Variable = var_name,
-    P_Value = p_value,
-    T_Value = t_value
-  )
-})
-
-# Apply Bonferroni correction
-results$Adjusted_P_Value <- p.adjust(results$P_Value, method = "bonferroni")
-
-# Print the results table
-print(results)
-
-```
-
-```{r}
-# Load required libraries
-library(dplyr)
-library(purrr)
-library(broom)
-
-# Read the Excel sheet (assuming your data is in a sheet named "Sheet1")
-data <- data_FB_clean
-
-# Specify the questionnaire variables
-dependent_vars <- c("BVAQ", "WMS", "TMT_A", "TMT_B", "STAI1", "STAI2",
-                    "DERS_sum_score", "DERS_non_acceptance", "DERS_goals", "DERS_impulse", "DERS_awareness", "DERS_strategies", "DERS_clarity",
-                    "CERQ_self_blame", "CERQ_acceptance", "CERQ_rumination", "CERQ_positive_reinforcement", "CERQ_refocus_on_planning",
-                    "CERQ_positive_reappraisal", "CERQ_putting_into_perspective", "CERQ_catastrophizing", "CERQ_blaming_others",
-                    "Digit_forward_span", "Digit_forward_score", "Digit_backward_span", "Digit_backward_score")
-
-# Initialize an empty list to store results
-results_list <- list()
-
-# Loop through dependent variables
-for (var_name in dependent_vars) {
-  cat("Processing variable:", var_name, "\n")  # Print the variable name
-  
-  # Perform t-test
-  t_test_result <- t.test(data[[var_name]] ~ data$Group_MDD1_HC2, paired = FALSE)
-  
-  # Extract the difference in means
-  mean_diff <- t_test_result$estimate[1]
-  
-  # Calculate pooled standard deviation
-  group1_sd <- sd(data[[var_name]][data$Group_MDD1_HC2 == 1])
-  group2_sd <- sd(data[[var_name]][data$Group_MDD1_HC2 == 2])
-  pooled_sd <- sqrt(((length(data[[var_name]][data$Group_MDD1_HC2 == 1]) - 1) * group1_sd^2 +
-                     (length(data[[var_name]][data$Group_MDD1_HC2 == 2]) - 1) * group2_sd^2) / 
-                    (length(data[[var_name]][data$Group_MDD1_HC2 == 1]) + length(data[[var_name]][data$Group_MDD1_HC2 == 2]) - 2))
-  
-  # Calculate effect size (Cohen's d)
-  effect_size <- mean_diff / pooled_sd
-  
-  # Fit a linear regression model
-  lm_result <- lm(data[[var_name]] ~ data$Group_MDD1_HC2)
-  
-  # Extract beta value (regression coefficient) and standard error
-  beta_value <- coef(lm_result)[2]
-  se <- summary(lm_result)$coefficients[2, "Std. Error"]
-  
-  # Store the results in a data frame
-  temp_df <- data.frame(
-    Variable = var_name,
-    T_Value = t_test_result$statistic,
-    P_Value = t_test_result$p.value,
-    Effect_Size = effect_size,
-    Beta_Value = beta_value,
-    Standard_Error = se
-  )
-  
-  # Append the results to the list only if not already appended
-  if (!any(names(results_list) == var_name)) {
-    results_list[[var_name]] <- temp_df
-  } else {
-    cat("Results for", var_name, "already appended.\n")
-  }
-}
-
-# Combine the results from the list into a single data frame
-results <- bind_rows(results_list)
-
-# Apply Bonferroni correction to p-values
-results$Adjusted_P_Value <- p.adjust(results$P_Value, method = "bonferroni")
-
-# Print the results table
-print(results)
-
-
-```
-# Calculate Cohens d!
-
 
 ```{r}
 library(dplyr)
 
 data <- data_FB_clean
+
 # Function to calculate Cohen's d
 cohens_d <- function(group1, group2) {
   n1 <- length(group1)
@@ -293,7 +181,7 @@ calculate_se <- function(group1, group2) {
 
 # Specify the questionnaire variables you want to analyze
 variables <- c("BVAQ", "WMS", "TMT_A", "TMT_B", "STAI1", "STAI2",
-                    "DERS_sum_score", "DERS_non_acceptance", "DERS_goals", "DERS_impulse", "DERS_awareness", "DERS_strategies",
+               "DERS_sum_score", "DERS_non_acceptance", "DERS_goals", "DERS_impulse", "DERS_awareness", "DERS_strategies",
                "DERS_clarity","CERQ_self_blame", "CERQ_acceptance", "CERQ_rumination", "CERQ_positive_reinforcement",
                "CERQ_refocus_on_planning","CERQ_positive_reappraisal", "CERQ_putting_into_perspective", "CERQ_catastrophizing",
                "CERQ_blaming_others","Digit_forward_span", "Digit_forward_score", "Digit_backward_span", "Digit_backward_score")
@@ -316,14 +204,17 @@ results <- lapply(variables, function(var) {
   )
 }) %>% bind_rows()
 
+# Apply Bonferroni correction
+results$Bonferroni_Corrected_P <- p.adjust(results$P_Value, method = "bonferroni")
+
+# Round numeric columns to 5 decimal places
+results <- results %>%
+  mutate(across(c(P_Value, T_Value, Cohens_D, SE, Bonferroni_Corrected_P), ~round(., 5)))
+
 # Display the results
 print(results)
-
-
+write.csv(results, "/Users/julia/Desktop/Git/EEGfMRIStudy/UnconsciousBias/data/Group_Comparison_Questionnaires.csv", row.names = FALSE)
 ```
-
-
-
 
 
 
