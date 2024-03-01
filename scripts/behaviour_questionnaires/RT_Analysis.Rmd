@@ -14,7 +14,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 
 ```{r}
-df <- read_excel("Path/BackwardMask_Mean_RT_Long.xlsx", 
+df <- read_excel("C:/Users/juhoffmann/Desktop/Git/UnconsciousBias/data/BackwardMask_Mean_RT_Long.xlsx", 
                  col_types = c("text", "text", "text", 
          "text", "text", "text", "numeric", 
          "numeric", "numeric", "numeric", 

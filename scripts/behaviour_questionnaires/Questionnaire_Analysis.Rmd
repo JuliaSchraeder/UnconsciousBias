@@ -31,7 +31,8 @@ library(ggplot2)
 
 ```{r}
 #"C:/Users/juhoffmann/Desktop/Git/UnconsciousBias/data/BackwardMask_Questionnaire_Results.xlsx
-data <- read_excel("/Users/julia/Desktop/Git/EEGfMRIStudy/UnconsciousBias/data/BackwardMask_Questionnaire_Results.xlsx", 
+#/Users/julia/Desktop/Git/EEGfMRIStudy/UnconsciousBias/data/
+data <- read_excel("C:/Users/juhoffmann/Desktop/Git/UnconsciousBias/data/BackwardMask_Questionnaire_Results.xlsx", 
                  col_types = c("text", 
          "numeric", "numeric", "numeric", 
          "numeric", "numeric", "numeric", "numeric",  
@@ -109,7 +110,7 @@ d_FB <- data[c('Group_MDD1_HC2', "BVAQ", "WMS", "TMT_A", "TMT_B", "STAI1", "STAI
              "DERS_sum_score", "DERS_non_acceptance", "DERS_goals", "DERS_impulse", "DERS_awareness", "DERS_strategies", "DERS_clarity",
              "CERQ_self_blame", "CERQ_acceptance", "CERQ_rumination", "CERQ_positive_reinforcement", "CERQ_refocus_on_planning",
              "CERQ_positive_reappraisal", "CERQ_putting_into_perspective", "CERQ_catastrophizing", "CERQ_blaming_others",
-             "Digit_forward_span", "Digit_forward_score", "Digit_backward_span", "Digit_backward_score")]
+              "Digit_forward_score", "Digit_backward_score")]
 ```
 
 ## remove rows with missing values
@@ -135,17 +136,17 @@ manova_out <- manova(cbind(BVAQ, WMS, TMT_A, TMT_B, STAI1, STAI2,
                            DERS_sum_score, DERS_non_acceptance, DERS_goals, DERS_impulse, DERS_awareness, DERS_strategies, DERS_clarity,
                            CERQ_self_blame, CERQ_acceptance, CERQ_rumination, CERQ_positive_reinforcement, CERQ_refocus_on_planning,
                            CERQ_positive_reappraisal, CERQ_putting_into_perspective, CERQ_catastrophizing, CERQ_blaming_others,
-                           Digit_forward_span, Digit_forward_score, Digit_backward_span, Digit_backward_score) 
+                           Digit_forward_score, Digit_backward_score) 
                      ~ Group_MDD1_HC2,
                      data = data_FB_clean)
 summary(manova_out, tol=0)
 
 # Extract the dependent variable names
 dependent_vars <- c("BVAQ", "WMS", "TMT_A", "TMT_B", "STAI1", "STAI2",
-                    "DERS_sum_score", "DERS_non_acceptance", "DERS_goals", "DERS_impulse", "DERS_awareness", "DERS_strategies", "DERS_clarity",
+                    "DERS_sum_score","DERS_non_acceptance","DERS_goals","DERS_impulse","DERS_awareness","DERS_strategies","DERS_clarity",
                     "CERQ_self_blame", "CERQ_acceptance", "CERQ_rumination", "CERQ_positive_reinforcement", "CERQ_refocus_on_planning",
                     "CERQ_positive_reappraisal", "CERQ_putting_into_perspective", "CERQ_catastrophizing", "CERQ_blaming_others",
-                    "Digit_forward_span", "Digit_forward_score", "Digit_backward_span", "Digit_backward_score")
+                    "Digit_forward_score","Digit_backward_score")
 
 ```
 
@@ -184,7 +185,7 @@ variables <- c("BVAQ", "WMS", "TMT_A", "TMT_B", "STAI1", "STAI2",
                "DERS_sum_score", "DERS_non_acceptance", "DERS_goals", "DERS_impulse", "DERS_awareness", "DERS_strategies",
                "DERS_clarity","CERQ_self_blame", "CERQ_acceptance", "CERQ_rumination", "CERQ_positive_reinforcement",
                "CERQ_refocus_on_planning","CERQ_positive_reappraisal", "CERQ_putting_into_perspective", "CERQ_catastrophizing",
-               "CERQ_blaming_others","Digit_forward_span", "Digit_forward_score", "Digit_backward_span", "Digit_backward_score")
+               "CERQ_blaming_others", "Digit_forward_score", "Digit_backward_score")
 
 # Perform calculations
 results <- lapply(variables, function(var) {
@@ -198,25 +199,22 @@ results <- lapply(variables, function(var) {
   data.frame(
     Variable = var,
     P_Value = t_test_result$p.value,
-    T_Value = unname(t_test_result$statistic),
-    Cohens_D = cohens_d_value,
+#    T_Value = unname(t_test_result$statistic),
+#    Cohens_D = cohens_d_value,
     SE = se
   )
 }) %>% bind_rows()
 
-# Apply Bonferroni correction
-results$Bonferroni_Corrected_P <- p.adjust(results$P_Value, method = "bonferroni")
 
 # Round numeric columns to 5 decimal places
 results <- results %>%
-  mutate(across(c(P_Value, T_Value, Cohens_D, SE, Bonferroni_Corrected_P), ~round(., 5)))
+  mutate(across(c(SE,P_Value), ~round(., 5)))
 
 # Display the results
 print(results)
-write.csv(results, "/Users/julia/Desktop/Git/EEGfMRIStudy/UnconsciousBias/data/Group_Comparison_Questionnaires.csv", row.names = FALSE)
+#/Users/julia/Desktop/Git/EEGfMRIStudy/UnconsciousBias/data/
+write.csv(results, "C:/Users/juhoffmann/Desktop/Git/UnconsciousBias/data/Group_Comparison_Questionnaires.csv", row.names = FALSE)
 ```
-
-
 
 # Plot data
 
@@ -242,7 +240,9 @@ ggplot(d_FB_long, aes(x = variable, y = value, fill = Group_MDD1_HC2)) +
 # Plot BDI
 
 ```{r}
-data <- read_excel("/Users/julia/Desktop/Git/EEGfMRIStudy/UnconsciousBias/data/BackwardMask_Questionnaire_Results.xlsx", 
+#C:/Users/juhoffmann/Desktop/Git/UnconsciousBias/data/
+#/Users/julia/Desktop/Git/EEGfMRIStudy/UnconsciousBias/data/
+data <- read_excel("C:/Users/juhoffmann/Desktop/Git/UnconsciousBias/data/BackwardMask_Questionnaire_Results.xlsx", 
                  col_types = c("text", 
          "numeric", "numeric", "numeric", 
          "numeric", "numeric", "numeric", "numeric",  
@@ -261,7 +261,6 @@ data <- read_excel("/Users/julia/Desktop/Git/EEGfMRIStudy/UnconsciousBias/data/B
          "numeric", "numeric", "numeric", 
          "numeric"), na = "na")
 
-
 colnames(data)[colnames(data) == "BDI-II Sum score"] ="BDI"
 
 d_BDI <- data[c('Group_MDD1_HC2', "BDI")]
@@ -279,41 +278,62 @@ ggplot(d_BDI, aes(x = Group_MDD1_HC2, y = BDI, fill = Group_MDD1_HC2)) +
   geom_violin(data = subset(d_BDI, Group_MDD1_HC2 == "2"), fill = "white") +
   labs(x = "Group_MDD1_HC2", y = "BDI") +
   theme_bw()
-
-```
-
-```{r}
-pairwise_results <- t.test(d_BDI$BDI ~ d_BDI$Group_MDD1_HC2, paired = FALSE)
-pairwise_results
 ```
 
 ```{r}
 # Perform t-test
 pairwise_results <- t.test(d_BDI$BDI ~ d_BDI$Group_MDD1_HC2, paired = FALSE)
-
-# Calculate effect size (Cohen's d)
-group1_mean <- mean(d_BDI$BDI[d_BDI$Group_MDD1_HC2 == 1])
-group2_mean <- mean(d_BDI$BDI[d_BDI$Group_MDD1_HC2 == 2])
-group1_var <- var(d_BDI$BDI[d_BDI$Group_MDD1_HC2 == 1])
-group2_var <- var(d_BDI$BDI[d_BDI$Group_MDD1_HC2 == 2])
-pooled_sd <- sqrt((group1_var + group2_var) / 2)
-effect_size <- (group1_mean - group2_mean) / pooled_sd
-
-# Fit a linear regression model
-lm_result <- lm(d_BDI$BDI ~ d_BDI$Group_MDD1_HC2)
-
-# Extract beta value (regression coefficient) and standard error
-beta_value <- coef(lm_result)[2]
 se <- summary(lm_result)$coefficients[2, "Std. Error"]
 
 # Print the t-test results, effect size, beta value, and standard error
 print("T-Test Results:")
 print(pairwise_results)
-print("\nEffect Size (Cohen's d):")
-print(effect_size)
-print("\nBeta Value:")
-print(beta_value)
 print("\nStandard Error:")
 print(se)
 
 ```
+
+# Apply Bonferroni correction
+
+```{r}
+p_values <- c(0.0000100,
+0.4820100,
+0.0552000,
+0.9226300,
+0.0000000,
+0.0000000,
+0.0000000,
+0.0000000,
+0.0000000,
+0.0000000,
+0.0000000,
+0.0000000,
+0.0000000,
+0.0000000,
+0.8694800,
+0.0000500,
+0.0000000,
+0.0000200,
+0.0000000,
+0.0000000,
+0.0000000,
+0.0389700,
+0.6748300,
+0.4972800,
+0.0000000
+)
+
+# Number of comparisons
+n_comparisons <- length(p_values)
+
+# Bonferroni correction
+bonferroni_corrected <- p_values * n_comparisons
+
+# Cap the corrected p-values at 1
+bonferroni_corrected <- pmin(bonferroni_corrected, 1)
+
+# Print the corrected p-values
+print(bonferroni_corrected)
+
+```
+
