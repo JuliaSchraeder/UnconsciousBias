@@ -1,8 +1,9 @@
 % Add EEGLAB to MATLAB path (update this path to your EEGLAB installation)
 addpath('C:/Users/juhoffmann/Desktop/eeglab2022.1');
+eeglab;
 
 % Directory where your EEG datasets are stored
-dataDir = 'C:/Users/juhoffmann/Desktop/EEG_BIDS/EEG_250Hz/Matlab';
+DataPath = 'C:/Users/juhoffmann/Desktop/EEG_BIDS/EEG_250Hz/Matlab';
 
 % List of participants - update this list according to your participant IDs/names
 % read in subjects 
@@ -147,7 +148,7 @@ slopeTable = table(participantIDs, slopes, 'VariableNames', {'ParticipantID', 'S
 disp(slopeTable);
 
 % Optionally, save the table to a file
-writetable(slopeTable, 'C:/Users/juhoffmann/Desktop/Git/UnconsciousBias/data/N170_ParticipantSlopes.csv'));
+writetable(slopeTable, 'C:/Users/juhoffmann/Desktop/Git/UnconsciousBias/data/N170_ParticipantSlopes.csv');
 
 %% combine individual slope with existing datasheet
 
