@@ -1,7 +1,6 @@
 % Add EEGLAB to MATLAB path (update this path to your EEGLAB installation)
 addpath('C:/Users/juhoffmann/Desktop/eeglab2022.1');
 eeglab;
-
 % Directory where your EEG datasets are stored
 DataPath = 'C:/Users/juhoffmann/Desktop/EEG_BIDS/EEG_250Hz/Matlab';
 
@@ -53,54 +52,62 @@ participants = subjects(idx);
 % Initialize a structure to hold the aggregated N170 amplitudes and trial numbers
 results = struct;
 
-% Initialize variables for aggregated data
-aggregatedN170Amplitudes = [];
-aggregatedTrialNumbers = [];
+% Define the conditions
+conditions = {'h_h_strong' 'h_h_weak' 'h_n_strong' 'h_n_weak' 'h_s_strong' 'h_s_weak' ...
+              'n_h_strong' 'n_h_weak' 'n_n_strong' 'n_n_weak' 'n_s_strong' 'n_s_weak' ...
+              's_h_strong' 's_h_weak' 's_n_strong' 's_n_weak' 's_s_strong' 's_s_weak'};
 
+% Loop through each participant
 for i = 1:length(participants)
     
     FileName = participants(i).name;
     filePath = fullfile(DataPath, FileName);
     EEG = pop_loadbva(filePath); 
-    participant = strcat('sub',FileName(5:7));   
+    participant = strcat('sub', FileName(5:7));   
         
-    % Epoch extraction around the N170 component
-    EEG = pop_epoch(EEG, {  'h_h_strong'  'h_h_weak'  'h_n_strong'  'h_n_weak'  'h_s_strong'  'h_s_weak'  'n_h_strong'  'n_h_weak'  'n_n_strong'  'n_n_weak'  'n_s_strong'  'n_s_weak'  's_h_strong'  's_h_weak'  's_n_strong'  's_n_weak'  's_s_strong'  's_s_weak'  },...
-    [-0.2  0.8],  'epochinfo', 'yes');
+    % Epoch extraction around the N170 component for specific conditions only
+    EEG = pop_epoch(EEG, conditions, [-0.2 0.8], 'epochinfo', 'yes');
     
     % Baseline correction
-    EEG = pop_rmbase(EEG, [-200, 0]);
+    EEG = pop_rmbase(EEG, [-200 0]);
     
     % Specify the channels of interest and time window for N170
     chanIndices = find(ismember({EEG.chanlocs.labels}, {'P7', 'P8', 'PO7', 'PO8'}));
     timeWindow = [150, 200]; % N170 time window in milliseconds
-    
-    % Find the time indices for the N170 window
     timeIndices = find(EEG.times >= timeWindow(1) & EEG.times <= timeWindow(2));
     
     % Initialize variable to store N170 amplitudes for each trial
-    n170Amplitudes = zeros(1, EEG.trials);
-    
-    % Loop through each trial to calculate N170 amplitude
-    for t = 1:EEG.trials
-        % Calculate mean amplitude across specified channels and time window
-        n170Amplitudes(t) = mean(mean(EEG.data(chanIndices, timeIndices, t), 2), 1);
-    end
+    n170Amplitudes = [];
+    for j = 1:length(conditions)
+        condition = conditions{j};
+            % Find Epochs
+            Epoch = extractfield(EEG.event,'epoch');
 
-    % Define trialNumbers here
-    trialNumbers = 1:EEG.trials;
+            % Find stimulus Type
+            Type = extractfield(EEG.event,'type');
+
+            % Find trials for the current condition
+            conditionTrials = find(strcmp(Type, condition));
+    
+            conditionEpochs = Epoch(conditionTrials);
+
+    % Access and calculate N170 amplitude only for specific conditions
+
+
+        % Calculate mean amplitude for each of these trials
+        for t = conditionEpochs
+            n170Amplitude = mean(mean(EEG.data(chanIndices, timeIndices, t), 2), 1);
+            n170Amplitudes = [n170Amplitudes, n170Amplitude];
+        end
+    end
 
     % Append the participant's data to the aggregated variables
     aggregatedN170Amplitudes = [aggregatedN170Amplitudes, n170Amplitudes];
-    aggregatedTrialNumbers = [aggregatedTrialNumbers, 1:EEG.trials]; % This assumes trial numbers restart at 1 for each participant
+    aggregatedTrialNumbers = [aggregatedTrialNumbers, 1:length(n170Amplitudes)]; % This assumes trial numbers restart at 1 for each participant
     
-    % Store the N170 amplitudes for this participant
+    % Store the N170 amplitudes and regression analysis results for this participant
     results.(participant).n170_amplitudes = n170Amplitudes;
-    
-    % Analysis of N170 amplitude vs. trial number
-    [b,~,~,~,stats] = regress(n170Amplitudes', [ones(EEG.trials, 1) trialNumbers']);
-    
-    % Store regression results for the individual participant
+    [b, ~, ~, ~, stats] = regress(n170Amplitudes', [ones(length(n170Amplitudes), 1) (1:length(n170Amplitudes))']);
     results.(participant).regression.b = b;
     results.(participant).regression.stats = stats;
 end
@@ -111,6 +118,9 @@ end
 % Store the aggregated regression results
 results.aggregated.regression.b = b_agg;
 results.aggregated.regression.stats = stats_agg;
+
+
+
 
 %%
 figure; % Create a new figure
@@ -184,7 +194,3 @@ end
 % Step 5: Save the updated dataset back to an Excel file
 updatedDatasetPath = 'C:/Users/juhoffmann/Desktop/Git/UnconsciousBias/data/updated_erp_N170_HC_and_MDD.xlsx';
 writetable(existingDataset, updatedDatasetPath);
-
-% Provide path for download
-updatedDatasetPath
-
