@@ -12,7 +12,7 @@ library(readxl)
 ## N170
 
 ```{r}
-erp_N170_All <- read_excel("C:/Users/juhoffmann/Desktop/Git/UnconsciousBias/data/erp_N170_All.xlsx")
+erp_N170_All <- read_excel("W:/Fmri_Forschung/Allerlei/JuliaS/GitHub/UnconsciousBias/data/erp_N170_All.xlsx")
 
 ```
 
@@ -91,7 +91,7 @@ cat("Overall Within-Subject Variance:", overall_within_subject_var, "\n")
 ## P100
 
 ```{r}
-erp_P100_All <- read_excel("C:/Users/juhoffmann/Desktop/Git/UnconsciousBias/data/erp_P100_All.xlsx")
+erp_P100_All <- read_excel("W:/Fmri_Forschung/Allerlei/JuliaS/GitHub/UnconsciousBias/data/erp_P100_All.xlsx")
 
 ```
 
@@ -265,7 +265,7 @@ print(results_df)
 ## P300
 
 ```{r}
-erp_P300_All<- read_excel("C:/Users/juhoffmann/Desktop/Git/UnconsciousBias/data/erp_P300_All.xlsx")
+erp_P300_All<- read_excel("W:/Fmri_Forschung/Allerlei/JuliaS/GitHub/UnconsciousBias/data/erp_P300_All.xlsx")
 ```
 
 ```{r}
