@@ -521,7 +521,7 @@ print(anova)
 ## Model 8: Test if Slope of N170 has an effect
 
 ```{r}
-data <- read_excel("C:/Users/juhoffmann/Desktop/Git/UnconsciousBias/data/updated_erp_N170_HC_and_MDD.xlsx")
+data <- read_excel("W:/Fmri_Forschung/Allerlei/JuliaS/GitHub/UnconsciousBias/data/updated_erp_N170_HC_and_MDD.xlsx")
 ```
 
 
@@ -539,7 +539,7 @@ data$gender            <- factor(data$Gender_f1_m2, ordered = FALSE)
 Model8 <- lmer(N170 ~ consciousness*primer_emotion*group
                           + gender 
                           + age
-                          + Slope
+                          + Slope_Mean
                           + (1|name),
                           data=data)
 ```
@@ -554,6 +554,36 @@ sjPlot::plot_model(Model8, type = "diag")
 
 ```{r}
 anova<-anova(Model8, type = 3, ddf= "Kenward-Roger")
+print(anova)
+```
+
+
+## Model 8b: Test if Slope of N170 has an effect + interaction effect
+```{r}
+data <- read_excel("W:/Fmri_Forschung/Allerlei/JuliaS/GitHub/UnconsciousBias/data/updated_erp_N170_HC_and_MDD.xlsx")
+```
+
+
+```{r}
+data$mask[data$mask == "bewusst"] <- "conscious"
+data$mask[data$mask == "unbewusst"] <- "unconscious"
+data$name              <- factor(data$subName, ordered = FALSE)
+data$consciousness     <- factor(data$mask, ordered = FALSE)
+data$primer_emotion    <- factor(data$emotion, ordered = FALSE)
+data$group             <- factor(data$group, ordered = FALSE)
+data$gender            <- factor(data$Gender_f1_m2, ordered = FALSE)
+```
+
+```{r}
+Model8.b <- lmer(N170 ~ consciousness*primer_emotion*group
+                          + gender 
+                          + age
+                          + Slope*primer_emotion*group
+                          + (1|name),
+                          data=data)
+```
+```{r}
+anova<-anova(Model8.b, type = 3, ddf= "Kenward-Roger")
 print(anova)
 ```
 
