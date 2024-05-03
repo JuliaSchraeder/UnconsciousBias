@@ -1,3 +1,5 @@
+clear
+
 % Add EEGLAB to MATLAB path (update this path to your EEGLAB installation)
 addpath('C:/Users/juhoffmann/Desktop/eeglab2022.1');
 eeglab;
@@ -52,7 +54,7 @@ participants = subjects(idx);
 
 
 % Loop through each participant
-for i = 1:2%length(participants)
+for i = 1:length(participants)
     FileName = participants(i).name;
     filePath = fullfile(DataPath, FileName);
     EEG = pop_loadbva(filePath); 
@@ -99,7 +101,8 @@ for i = 1:2%length(participants)
         conditionEpochs = Epoch(conditionTrials);
 
         % Debug: Check trial indices
-        disp(['Condition: ' condition ' - Trials: ' num2str(conditionEpochs)]);
+        disp(['Condition: ' condition ' - Trials: ' num2str(conditionEpochs)])
+
 
         % Compute N170 amplitudes for these trials and aggregate them into the correct category
         for k = 1:length(conditionEpochs)
@@ -108,30 +111,147 @@ for i = 1:2%length(participants)
                 warning('Skipping empty indices for trial computation.');
                 continue;
             end
-            conditionERPtrial = mean(EEG.data(:,:,conditionEpochs),3);
-            n170Amplitude = mean(conditionERPtrial(chanIndices,timeIndices),1);
+
+            mean_erp_range = mean(mean(EEG.data(chanIndices,timeIndices,t),3),1);
+            n170Amplitude = min(mean_erp_range);
             emotionData.(emotionKey) = [emotionData.(emotionKey), n170Amplitude];
         end
     end
+    N170_values.(participant) = struct();
+    N170_values.(participant) = emotionData;
 
     % Compute and store regression slopes for each emotional category
     results.(participant) = struct();
+    results_trial_sets.(participant) = struct();
     emotions = fieldnames(emotionData);
+    
+    % Compute slopes for 10 trials per condition
     for emotion = emotions'
         n170Amplitudes = emotionData.(emotion{1});
-        trialNumbers = 1:length(n170Amplitudes); % Assuming consecutive numbering, adjust if needed
-        if isempty(n170Amplitudes)
-            warning(['Skipping regression for empty N170 amplitudes in ' emotion{1}]);
-            continue;
+        trialNumbers = 1:length(n170Amplitudes);
+        trial_sets = floor(length(trialNumbers)/10); % Number of full 10-trial sets
+        for k = 1:trial_sets
+            % Select the trials for this set
+            trial_indices = (k-1)*10 + (1:10);
+            selected_trials = n170Amplitudes(trial_indices);
+            % Compute slope
+            [b, ~, ~, ~, stats] =  regress(selected_trials', [ones(length(selected_trials), 1) (1:length(selected_trials))']);
+            results_trial_sets.(participant).(emotion{1})(k).slope = b(2);
+            results_trial_sets.(participant).(emotion{1})(k).stats = stats;
         end
-        [b, ~, ~, ~, stats] = regress(n170Amplitudes', [ones(length(trialNumbers), 1) trialNumbers']);
-        results.(participant).(emotion{1}).slope = b(2);
-        results.(participant).(emotion{1}).stats = stats;
+    
+     % Compute slopes for every condition
+     for emotion = emotions'
+            n170Amplitudes = emotionData.(emotion{1});
+            trialNumbers = 1:length(n170Amplitudes); % Assuming consecutive numbering, adjust if needed
+            if isempty(n170Amplitudes)
+                warning(['Skipping regression for empty N170 amplitudes in ' emotion{1}]);
+                continue;
+            end
+            [b, ~, ~, ~, stats] = regress(n170Amplitudes', [ones(length(trialNumbers), 1) trialNumbers']);
+            results.(participant).(emotion{1}).slope = b(2);
+            results.(participant).(emotion{1}).stats = stats;
+     end
     end
 end
 
 
-%% Extract data
+
+
+
+%% Plot N170 for every participant per condition
+participants = fieldnames(N170_values); 
+numParticipants = length(participants);
+
+% Define number of emotions
+emotions = {'Happy', 'Neutral', 'Sad'};
+numEmotions = length(emotions);
+
+% Create figure
+figure;
+for i = 1:numParticipants
+    participant = participants{i};
+    % Subplot for each participant
+    for j = 1:numEmotions
+        emotion = emotions{j};
+        subplot(numParticipants, numEmotions, (i - 1) * numEmotions + j);
+        plot(N170_values.(participant).(emotion));
+        title([participant ' - ' emotion]);
+        xlabel('Trial');
+        ylabel('N170 Amplitude (µV)');
+        grid on;
+    end
+end
+
+% Adjust layout
+sgtitle('N170 Values by Participant and Emotion');
+
+
+
+%% Plot mean N170 for every condition
+% Initialize storage for data aggregated across all participants
+aggregateData = struct('Happy', [], 'Neutral', [], 'Sad', []);
+
+participants = fieldnames(N170_values);
+maxTrials = 0; % Find the maximum number of trials
+
+% First determine the maximum number of trials to initialize vectors correctly
+for i = 1:length(participants)
+    partData = N170_values.(participants{i});
+    for emotion = fieldnames(partData)'
+        numTrials = length(partData.(emotion{1}));
+        maxTrials = max(maxTrials, numTrials);
+    end
+end
+
+% Initialize vectors for each emotion to maxTrials length
+for emotion = fieldnames(aggregateData)'
+    aggregateData.(emotion{1}) = cell(1, maxTrials);
+end
+
+% Loop through each participant's data to aggregate N170 values
+for i = 1:length(participants)
+    partData = N170_values.(participants{i});
+    for emotion = fieldnames(partData)'
+        emotionName = emotion{1};
+        for t = 1:length(partData.(emotionName))
+            aggregateData.(emotionName){t} = [aggregateData.(emotionName){t}, partData.(emotionName)(t)];
+        end
+    end
+end
+
+% Calculate the mean of each trial across all participants
+meanData = struct('Happy', zeros(1, maxTrials), 'Neutral', zeros(1, maxTrials), 'Sad', zeros(1, maxTrials));
+for emotion = fieldnames(meanData)'
+    for t = 1:maxTrials
+        % Only calculate the mean if there is data
+        if ~isempty(aggregateData.(emotion{1}){t})
+            meanData.(emotion{1})(t) = mean(aggregateData.(emotion{1}){t});
+        end
+    end
+end
+
+
+% Plotting
+figure;
+hold on;
+colors = lines(3); % Get 3 distinct colors
+
+% Plot each emotion's mean data
+plot(meanData.Happy, 'Color', colors(1, :), 'DisplayName', 'Happy');
+plot(meanData.Neutral, 'Color', colors(2, :), 'DisplayName', 'Neutral');
+plot(meanData.Sad, 'Color', colors(3, :), 'DisplayName', 'Sad');
+
+% Add labels and legend
+xlabel('Trial Number');
+ylabel('Mean N170 Amplitude (µV)');
+title('Mean N170 Amplitude Across Trials by Emotion');
+legend show;
+grid on;
+
+
+
+%% Extract Slopes
 
 participantData = table();
 
@@ -155,8 +275,22 @@ for participant = fieldnames(results)'
     end
 end
 
+% Calculate mean slopes for each condition
+meanSlopeHappy = mean(participantData.Slope_Happy);
+meanSlopeNeutral = mean(participantData.Slope_Neutral);
+meanSlopeSad = mean(participantData.Slope_Sad);
+
+% Display the mean slopes
+disp(['Mean Slope for Happy: ', num2str(meanSlopeHappy)]);
+disp(['Mean Slope for Neutral: ', num2str(meanSlopeNeutral)]);
+disp(['Mean Slope for Sad: ', num2str(meanSlopeSad)]);
+
+allSlopes = [participantData.Slope_Happy; participantData.Slope_Neutral; participantData.Slope_Sad];
+
+meanSlope = mean(allSlopes);
+
 % Export to CSV file
-writetable(participantData, 'C:\Users\juhoffmann\Desktop\Git\UnconsciousBias\data\ParticipantSlopes_N170_emotions.csv');
+writetable(participantData, 'W:/Fmri_Forschung/Allerlei/JuliaS/GitHub/UnconsciousBias/data/ParticipantSlopes_N170_emotions.csv');
 
 %% Extract data in long format
 
@@ -189,17 +323,102 @@ end
 
 
 % Export to CSV file
-writetable(participantDataLong, 'C:\Users\juhoffmann\Desktop\Git\UnconsciousBias\data\\ParticipantSlopesEmotionsLong.csv');
+writetable(participantDataLong, 'W:/Fmri_Forschung/Allerlei/JuliaS/GitHub/UnconsciousBias/data/ParticipantSlopesEmotionsLong.csv');
 
 
+% 
+% 
+% 
+% % Assuming slopes are in separate arrays: slopesHappy, slopesSad, slopesNeutral
+% meanSlopeHappy = mean(slope_happy);
+% meanSlopeSad = mean(slope_sad);
+% meanSlopeNeutral = mean(slope_neutral);
+% 
+% % Display the mean slopes
+% disp(['Mean Slope Happy: ', num2str(meanSlopeHappy)]);
+% disp(['Mean Slope Sad: ', num2str(meanSlopeSad)]);
+% disp(['Mean Slope Neutral: ', num2str(meanSlopeNeutral)]);
 
-% Assuming slopes are in separate arrays: slopesHappy, slopesSad, slopesNeutral
-meanSlopeHappy = mean(slope_happy);
-meanSlopeSad = mean(slope_sad);
-meanSlopeNeutral = mean(slope_neutral);
+%%
 
-% Display the mean slopes
-disp(['Mean Slope Happy: ', num2str(meanSlopeHappy)]);
-disp(['Mean Slope Sad: ', num2str(meanSlopeSad)]);
-disp(['Mean Slope Neutral: ', num2str(meanSlopeNeutral)]);
+% Define the emotions
+emotions = {'Happy', 'Neutral', 'Sad'};
+
+% Initialize variables to store slopes for plotting
+plotData = struct('Happy', [], 'Neutral', [], 'Sad', []);
+
+% Gather data from results_trial_sets
+participants = fieldnames(results_trial_sets);
+for i = 1:length(participants)
+    participant = participants{i};
+    for emotion = emotions
+        emotionName = emotion{1};
+        if isfield(results_trial_sets.(participant), emotionName)
+            for k = 1:length(results_trial_sets.(participant).(emotionName))
+                if isfield(results_trial_sets.(participant).(emotionName)(k), 'slope')
+                    plotData.(emotionName) = [plotData.(emotionName), results_trial_sets.(participant).(emotionName)(k).slope];
+                end
+            end
+        end
+    end
+end
+
+% Plotting
+figure;
+hold on;
+
+% Colors for each emotion
+colors = lines(numel(emotions));  % Get distinct colors for each emotion
+
+% Plot each emotion's data
+for i = 1:numel(emotions)
+    emotionName = emotions{i};
+    plot(plotData.(emotionName), '-o', 'Color', colors(i, :), 'DisplayName', emotionName);
+end
+
+% Enhance the plot with labels, legend, and grid
+xlabel('Set Number (each set represents 10 trials)');
+ylabel('Slope');
+title('Slopes of N170 Amplitudes Across Trial Sets for Each Emotion');
+legend show;
+grid on;
+
+% Check if any data was empty and print a message if so
+for emotion = emotions
+    if isempty(plotData.(emotion{1}))
+        fprintf('No data available for %s\n', emotion{1});
+    end
+end
+
+
+%% plot per emotion
+
+% Colors for each emotion, defined outside the loop for consistency
+colors = lines(numel(emotions));  % Get distinct colors for each emotion
+
+% Plot each emotion's data in separate figures
+for i = 1:numel(emotions)
+    emotionName = emotions{i};
+    
+    % Create a new figure for each emotion
+    figure;
+    hold on;
+    
+    % Plot the data
+    plot(plotData.(emotionName), '-o', 'Color', colors(i, :), 'DisplayName', emotionName);
+    
+    % Enhance the plot with labels, legend, and grid
+    xlabel('Set Number (each set represents 10 trials)');
+    ylabel('Slope');
+    title(['Slopes of N170 Amplitudes Across Trial Sets for ', emotionName]);
+    legend show;
+    grid on;
+    
+    % Check if any data was empty and print a message if so
+    if isempty(plotData.(emotionName))
+        fprintf('No data available for %s\n', emotionName);
+    end
+    
+    hold off;
+end
 
