@@ -539,7 +539,7 @@ data$gender            <- factor(data$Gender_f1_m2, ordered = FALSE)
 Model8 <- lmer(N170 ~ consciousness*primer_emotion*group
                           + gender 
                           + age
-                          + Slope_Mean
+                          + Slope
                           + (1|name),
                           data=data)
 ```
@@ -560,7 +560,7 @@ print(anova)
 
 ## Model 8b: Test if Slope of N170 has an effect + interaction effect
 ```{r}
-data <- read_excel("W:/Fmri_Forschung/Allerlei/JuliaS/GitHub/UnconsciousBias/data/updated_erp_N170_HC_and_MDD.xlsx")
+data <- read_excel("W:/Fmri_Forschung/Allerlei/JuliaS/GitHub/UnconsciousBias/data/merged_N170_datasets_matlab.xlsx")
 ```
 
 
@@ -583,10 +583,154 @@ Model8.b <- lmer(N170 ~ consciousness*primer_emotion*group
                           data=data)
 ```
 ```{r}
-anova<-anova(Model8.b, type = 3, ddf= "Kenward-Roger")
+anova<-anova(Model8.b, type = 3, ddf= "Satterthwaite")
 print(anova)
 ```
 
+### get statistics of Model 8b
+
+```{r}
+eff.consciousness <- emmeans(Model8.b, pairwise ~ consciousness)
+eff.primer        <- emmeans(Model8.b, pairwise ~ primer_emotion,adjust ="bonferroni")
+eff.gender        <- emmeans(Model8.b, pairwise ~ gender)
+eff.age           <- cor.test(data$N170,data$age, method="spearman")
+eff.group_consc   <- emmeans(Model8.b, pairwise ~ consciousness:group,adjust ="bonferroni")
+eff.group_primer  <- emmeans(Model8.b, pairwise ~ primer_emotion:group,adjust ="bonferroni")
+eff.group_primer_con  <- emmeans(Model8.b, pairwise ~ consciousness:primer_emotion:group,adjust ="bonferroni")
+```
+
+
+```{r}
+eff.consciousness
+eff.primer     
+eff.gender     
+eff.age          
+eff.group_consc
+eff.group_primer  
+eff.group_primer_con
+```
+
+
+### Plot
+
+
+```{r}
+library(afex)     
+library(cowplot)
+#library(ggpubr)
+```
+
+```{r}
+primer <-  afex_plot(Model8.b, x = "primer_emotion", 
+            id = "name", dodge = 0.8, 
+            factor_levels = list(primer_emotion = c("happy", "neutral","sad")),
+            data_geom = geom_violin, 
+            mapping = c("linetype", "fill"),
+            error_arg = list(width = 0.2),
+            legend_title = "primer emotion",
+            data_arg = list(width = 0.5)) + 
+    #ggpubr::theme_pubr() + 
+    theme_classic(base_size = 16) +
+    geom_point(size=0.4) +
+    scale_fill_manual(values = c("happy" = "greenyellow", "neutral" = "lightblue", "sad"= "orange")) + 
+    theme(legend.position="none") +
+    labs(y = "N170", x = "")
+
+  
+conscious<-  afex_plot(Model8.b, x = "consciousness", 
+            id = "name", dodge = 0.8,
+            factor_levels = list(consciousness = c("con", "uncon")),
+            data_geom = geom_violin, 
+            mapping = "fill",
+            error_arg = list(width = 0.2),
+            data_arg = list(width = 0.5)) +# ggpubr::theme_pubr() + 
+    theme_classic(base_size = 16) +
+    geom_point(size=0.4) +
+    scale_fill_manual(values = c("con" = "grey", "uncon" = "white")) +
+    theme(legend.position="none") + 
+    labs(y = "N170", x = "")
+  
+gender<-    afex_plot(Model8.b, x = "gender", #trace = "target_emotion", panel = "consciousness", 
+            id = "name", dodge = 0.8,
+            factor_levels = list(gender = c("female", "male")),
+            data_geom = geom_violin, 
+            mapping = "fill",
+            error_arg = list(width = 0.2),
+            legend_title = "",
+            data_arg = list(width = 0.5)) + #ggpubr::theme_pubr() + 
+    theme_classic(base_size = 16) +
+    geom_point(size=0.4) +
+    scale_fill_manual(values = c("female" = "grey", "male" = "white")) +
+    theme(legend.position="none") + 
+    labs(y = "N170", x = "")
+
+age<- ggplot(data, aes(x = age, y = N170)) +
+  geom_point(size=0.4) +
+  geom_smooth(method = "lm") +
+  #ggpubr::theme_pubr() +
+  theme_classic(base_size = 16) +
+  labs(x = "", y ="N170")
+
+con_in_group <-   afex_plot(Model8.b, x = "consciousness", panel = "group", 
+            id = "name", dodge = 0.8,
+            factor_levels = list(group = c("HC", "MDD"),
+                                 consciousness = c("con", "uncon")),
+            data_geom = geom_violin, 
+            mapping = c("linetype", "fill", "group"), 
+            error_arg = list(width = 0.1),
+            legend_title = "",
+            data_arg = list(width = 0.5)) + #ggpubr::theme_pubr() +
+  theme_classic(base_size = 16) +
+  scale_fill_manual(values = c("con" = "grey", "uncon" = "white")) +
+  theme(legend.position="none") + 
+  geom_point(size=0.4)+
+  labs(y = "N170", x = "")
+
+emotion_in_group <-   afex_plot(Model8.b, x = "primer_emotion", panel = "group", 
+            id = "name", dodge = 0.8,
+            factor_levels = list(group = c("HC", "MDD"),
+                                 primer_emotion = c("h", "n","s")),
+            data_geom = geom_violin, 
+            mapping = c("linetype", "fill", "group"), 
+            error_arg = list(width = 0.1),
+            legend_title = "",
+            data_arg = list(width = 0.5)) + #ggpubr::theme_pubr() +
+  theme_classic(base_size = 16) +
+  scale_fill_manual(values = c("h" = "greenyellow", "n" = "lightblue", "s"= "orange")) +
+  theme(legend.position="none") + 
+  geom_point(size=0.4)+
+  labs(y = "N170", x = "")
+
+
+emotion_con_group <- afex_plot(Model8.b, x = "primer_emotion", panel = c("group", "consciousness"), 
+            id = "name", dodge = 0.8,
+            factor_levels = list(group = c("HC", "MDD"),
+                                 primer_emotion = c("h", "n", "s"),
+                                 consciousness = c("con", "uncon")),
+            data_geom = geom_violin, 
+            mapping = c("linetype", "fill", "group"), 
+            error_arg = list(width = 0.1),
+            legend_title = "",
+            data_arg = list(width = 0.5)) + 
+  theme_classic(base_size = 12) +
+  scale_fill_manual(values = c("h" = "greenyellow", "n" = "lightblue", "s" = "orange")) +
+  theme(legend.position = "none") + 
+  geom_point(size = 0.4) +
+  labs(y = "N170", x = "")
+```
+
+```{r}
+# Combine plots into a grid
+combined_plots <- cowplot::plot_grid(primer, conscious, gender, age, con_in_group, emotion_in_group, emotion_con_group,
+                            labels = c("A", "B", "C", "D", "E", "F", "G"),
+                            ncol = 2,nrow = 4,
+                            label_size = 15)
+
+# Display the combined plots
+#print(combined_plots)
+ggsave("W:/Fmri_Forschung/Allerlei/JuliaS/Paper/2024_EEGfMRi/BiologicalPsychiatrySubmission/Revision2/GLMM_N170.tiff", combined_plots, width =7, height = 12)
+
+```
 
 ## Model 9: Effect of Demographics on Neurophysiological data
 
