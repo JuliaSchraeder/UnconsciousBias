@@ -556,14 +556,177 @@ sjPlot::plot_model(Model8, type = "diag")
 anova<-anova(Model8, type = 3, ddf= "Kenward-Roger")
 print(anova)
 ```
+## Model 8a: Test if Slope of N170 has an effect + interaction effect
+```{r}
+data <- read_excel("W:/Fmri_Forschung/Allerlei/JuliaS/GitHub/UnconsciousBias/data/merged_N170_datasets_perBlock.xlsx")
+```
+```{r}
+data$mask[data$mask == "bewusst"] <- "conscious"
+data$mask[data$mask == "unbewusst"] <- "unconscious"
+data$Block             <- factor(data$Block, ordered = FALSE)
+data$name              <- factor(data$subName, ordered = FALSE)
+data$consciousness     <- factor(data$mask, ordered = FALSE)
+data$primer_emotion    <- factor(data$emotion, ordered = FALSE)
+data$group             <- factor(data$group, ordered = FALSE)
+data$gender            <- factor(data$Gender_f1_m2, ordered = FALSE)
+```
+
+
+```{r}
+Model8.a.1 <- lmer(N170 ~ consciousness*primer_emotion*group
+                          + gender 
+                          + age
+                          + Slope*primer_emotion*group
+                          + (1|name),
+                          data=data)
+```
+```{r}
+anova<-anova(Model8.a.1, type = 3, ddf= "Satterthwaite")
+print(anova)
+```
+
+```{r}
+Model8.a.2 <- lmer(N170 ~ consciousness*primer_emotion*group
+                          + gender 
+                          + age
+                          + Block
+                          + Slope*primer_emotion*group
+                          + (1|name),
+                          data=data)
+```
+```{r}
+anova<-anova(Model8.a.2, type = 3, ddf= "Satterthwaite")
+print(anova)
+```
+```{r}
+Model8.a.3 <- lmer(N170 ~ consciousness*primer_emotion*group
+                          + gender 
+                          + age
+                          + Block*primer_emotion*group
+                          + (1|name),
+                          data=data)
+```
+```{r}
+anova<-anova(Model8.a.3, type = 3, ddf= "Satterthwaite")
+print(anova)
+```
+
+```{r}
+anova(Model8.a.1,Model8.a.2, Model8.a.3)
+```
+-- Model 8.a.1. has slightly better AIC/BIC values
+
+### get statistics of Model 8.a.1
+
+```{r}
+eff.consciousness <- emmeans(Model8.a.1, pairwise ~ consciousness)
+eff.primer        <- emmeans(Model8.a.1, pairwise ~ primer_emotion,adjust ="bonferroni")
+eff.gender        <- emmeans(Model8.a.1, pairwise ~ gender)
+eff.age           <- cor.test(data$N170,data$age, method="spearman")
+eff.group_consc   <- emmeans(Model8.a.1, pairwise ~ consciousness:group,adjust ="bonferroni")
+```
+```{r}
+eff.consciousness
+eff.primer     
+eff.gender     
+eff.age          
+eff.group_consc
+```
+### plot effects of Model 8.a.1
+
+
+```{r}
+library(afex)     
+library(cowplot)
+#library(ggpubr)
+```
+
+```{r}
+primer <-  afex_plot(Model8.a.1, x = "primer_emotion", 
+            id = "name", dodge = 0.8, 
+            factor_levels = list(primer_emotion = c("happy", "neutral","sad")),
+            data_geom = geom_violin, 
+            mapping = c("linetype", "fill"),
+            error_arg = list(width = 0.2),
+            legend_title = "primer emotion",
+            data_arg = list(width = 0.5)) + 
+    #ggpubr::theme_pubr() + 
+    theme_classic(base_size = 16) +
+    geom_point(size=0.4) +
+    scale_fill_manual(values = c("happy" = "greenyellow", "neutral" = "lightblue", "sad"= "orange")) + 
+    theme(legend.position="none") +
+    labs(y = "N170", x = "")
+
+  
+conscious<-  afex_plot(Model8.a.1, x = "consciousness", 
+            id = "name", dodge = 0.8,
+            factor_levels = list(consciousness = c("con", "uncon")),
+            data_geom = geom_violin, 
+            mapping = "fill",
+            error_arg = list(width = 0.2),
+            data_arg = list(width = 0.5)) +# ggpubr::theme_pubr() + 
+    theme_classic(base_size = 16) +
+    geom_point(size=0.4) +
+    scale_fill_manual(values = c("con" = "grey", "uncon" = "white")) +
+    theme(legend.position="none") + 
+    labs(y = "N170", x = "")
+  
+gender<-    afex_plot(Model8.a.1, x = "gender", #trace = "target_emotion", panel = "consciousness", 
+            id = "name", dodge = 0.8,
+            factor_levels = list(gender = c("female", "male")),
+            data_geom = geom_violin, 
+            mapping = "fill",
+            error_arg = list(width = 0.2),
+            legend_title = "",
+            data_arg = list(width = 0.5)) + #ggpubr::theme_pubr() + 
+    theme_classic(base_size = 16) +
+    geom_point(size=0.4) +
+    scale_fill_manual(values = c("female" = "grey", "male" = "white")) +
+    theme(legend.position="none") + 
+    labs(y = "N170", x = "")
+
+age<- ggplot(data, aes(x = age, y = N170)) +
+  geom_point(size=0.4) +
+  geom_smooth(method = "lm") +
+  #ggpubr::theme_pubr() +
+  theme_classic(base_size = 16) +
+  labs(x = "", y ="N170")
+
+con_in_group <-   afex_plot(Model8.a.1, x = "consciousness", panel = "group", 
+            id = "name", dodge = 0.8,
+            factor_levels = list(group = c("HC", "MDD"),
+                                 consciousness = c("con", "uncon")),
+            data_geom = geom_violin, 
+            mapping = c("linetype", "fill", "group"), 
+            error_arg = list(width = 0.1),
+            legend_title = "",
+            data_arg = list(width = 0.5)) + #ggpubr::theme_pubr() +
+  theme_classic(base_size = 16) +
+  scale_fill_manual(values = c("con" = "grey", "uncon" = "white")) +
+  theme(legend.position="none") + 
+  geom_point(size=0.4)+
+  labs(y = "N170", x = "")
+```
+
+
+```{r}
+# Combine plots into a grid
+combined_plots <- cowplot::plot_grid(primer, conscious, gender, age, con_in_group,
+                            labels = c("A", "B", "C", "D", "E"),
+                            ncol = 2,nrow = 4,
+                            label_size = 15)
+
+# Display the combined plots
+#print(combined_plots)
+ggsave("W:/Fmri_Forschung/Allerlei/JuliaS/Paper/2024_EEGfMRi/BiologicalPsychiatrySubmission/Revision2/GLMM_N170.tiff", combined_plots, width =7, height = 12)
+```
+
 
 
 ## Model 8b: Test if Slope of N170 has an effect + interaction effect
 ```{r}
-data <- read_excel("W:/Fmri_Forschung/Allerlei/JuliaS/GitHub/UnconsciousBias/data/merged_N170_datasets_matlab.xlsx")
+data <- read_excel("W:/Fmri_Forschung/Allerlei/JuliaS/GitHub/UnconsciousBias/data/merged_N170_datasets_10stacks.xlsx")
 ```
-
-
 ```{r}
 data$mask[data$mask == "bewusst"] <- "conscious"
 data$mask[data$mask == "unbewusst"] <- "unconscious"
@@ -611,7 +774,7 @@ eff.group_primer_con
 ```
 
 
-### Plot
+### plot effects of Model 8b
 
 
 ```{r}

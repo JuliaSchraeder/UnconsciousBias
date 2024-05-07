@@ -124,7 +124,7 @@ for i = 1:length(participants)
 end
 
 
-%% Plot
+%% Plot multiple regression lines 
 clear
 % Load the data
 load('W:/Fmri_Forschung/Allerlei/JuliaS/GitHub/UnconsciousBias/scripts/eeg_analysis/N170results.mat');
@@ -132,7 +132,7 @@ load('W:/Fmri_Forschung/Allerlei/JuliaS/GitHub/UnconsciousBias/scripts/eeg_analy
 % Initialize variables for plotting
 emotions = {'Happy', 'Sad', 'Neutral'};
 participantNames = fieldnames(results); % Get all participant names
-numTrials = 120; % Assuming a maximum of 50 trials per participant for each emotion
+numTrials = 120; % Total number of trials
 
 % Prepare to store the mean values and slopes
 meanN170 = struct();
@@ -164,27 +164,32 @@ for e = 1:numel(emotions)
     meanN170.(emotion)(countTrials > 0) = meanN170.(emotion)(countTrials > 0) ./ countTrials(countTrials > 0);
 end
 
-% Plot the results with regression lines
+% Plot the results with regression lines every 40 trials
 figure;
 hold on;
 colors = [0.4660 0.6740 0.1880; 0.9290 0.6940 0.1250; 0.3010 0.7450 0.9330]; % Custom colors: less bright
-legends = {};
+
 for e = 1:numel(emotions)
     emotion = emotions{e};
-    trials = 1:length(meanN170.(emotion)(meanN170.(emotion) ~= 0)); % Only consider trials with data
-    meanValues = meanN170.(emotion)(meanN170.(emotion) ~= 0);
+    meanValues = meanN170.(emotion);
+    trials = 1:length(meanValues);
+    % Plot the mean N170 values (dots)
     plot(trials, meanValues, 'o', 'Color', colors(e,:), 'DisplayName', emotion); % Display as dots
-    legends{end+1} = emotion; % Add to legend
     
-    % Fit linear regression
-    mdl = fitlm(trials', meanValues');
-    coef = mdl.Coefficients.Estimate;
-    xFit = [min(trials), max(trials)];
-    yFit = coef(1) + coef(2) * xFit;
-    plot(xFit, yFit, '-', 'Color', colors(e,:), 'LineWidth', 2); % Display as lines
     
-    % Store the slope
-    regressionSlopes(e) = coef(2);
+    % Fit linear regression for every 40 trials
+    for i = 1:120:length(trials)-119
+        stack_trials = trials(i:i+119);
+        stack_values = meanValues(i:i+119);
+        % Fit linear regression for each stack of 10 trials
+        mdl = fitlm(stack_trials', stack_values');
+        coef = mdl.Coefficients.Estimate;
+        xFit = [min(stack_trials), max(stack_trials)];
+        yFit = coef(1) + coef(2) * xFit;
+        plot(xFit, yFit, '-', 'Color', colors(e,:), 'LineWidth', 1); % Display as lines
+        % Store the slope for each stack of 10 trials
+        regressionSlopes(e,i) = coef(2);
+    end
 end
 
 % Enhance the plot
@@ -194,19 +199,208 @@ title('Mean N170 Amplitude Across All Participants for Each Emotion with Regress
 
 % Display the slopes for each emotion
 for e = 1:numel(emotions)
-    disp(['Mean slope for ', emotions{e}, ': ', num2str(regressionSlopes(e))]);
+    emotion = emotions{e};
+    disp(['Mean slope for ', emotion, ': ', num2str(mean(regressionSlopes(e,:)))]);
 end
 
-
-legends = {'happy', 'happy slope', 'sad','sad slope','neutral','neutral slope'};
 % Create custom legend with matching colors
-lgd = legend(legends, 'Location', 'NorthEastOutside'); legend('boxoff') % Adjust the legend location
+%legend(legends, 'Location', 'NorthEastOutside'); legend('boxoff'); % Adjust the legend location
+hold off;
+
+%Mean slope for Happy: -0.00038183
+%Mean slope for Sad: -0.00063649
+%Mean slope for Neutral: -0.00064317
+
+
+%% Calculate slope per Block per emotion
+
+%--------------------Plot multiple regression lines--------------------%
+clear
+
+% Load the data
+load('W:/Fmri_Forschung/Allerlei/JuliaS/GitHub/UnconsciousBias/scripts/eeg_analysis/N170results.mat');
+
+% Initialize variables for plotting
+emotions = {'Happy', 'Sad', 'Neutral'};
+participantNames = fieldnames(results); % Get all participant names
+numTrials = 120; % Total number of trials
+
+% Prepare to store the mean values and slopes
+meanN170 = struct();
+regressionSlopes = zeros(1, numel(emotions)); % Store the slopes of regression lines
+
+% Initialize data storage for each emotion and trial
+for e = 1:numel(emotions)
+    emotion = emotions{e};
+    meanN170.(emotion) = zeros(1, numTrials); % Preallocate with zeros
+    countTrials = zeros(1, numTrials); % To count the number of participants per trial
+end
+
+% Collect N170 values across all participants
+for p = 1:numel(participantNames)
+    participant = participantNames{p};
+    for e = 1:numel(emotions)
+        emotion = emotions{e};
+        if isfield(results.(participant), emotion) && ~isempty(results.(participant).(emotion).data)
+            dataLength = length(results.(participant).(emotion).data);
+            meanN170.(emotion)(1:dataLength) = meanN170.(emotion)(1:dataLength) + results.(participant).(emotion).data;
+            countTrials(1:dataLength) = countTrials(1:dataLength) + 1;
+        end
+    end
+end
+
+% Calculate the mean N170 values
+for e = 1:numel(emotions)
+    emotion = emotions{e};
+    meanN170.(emotion)(countTrials > 0) = meanN170.(emotion)(countTrials > 0) ./ countTrials(countTrials > 0);
+end
+
+% Plot the results with regression lines every 10 trials
+figure;
+hold on;
+colors = [0.4660 0.6740 0.1880; 0.9290 0.6940 0.1250; 0.3010 0.7450 0.9330]; % Custom colors: less bright
+
+for e = 1:numel(emotions)
+    emotion = emotions{e};
+    meanValues = meanN170.(emotion);
+    trials = 1:length(meanValues);
+    % Plot the mean N170 values (dots)
+    plot(trials, meanValues, 'o', 'Color', colors(e,:), 'DisplayName', emotion); % Display as dots
+    
+    
+    % Fit linear regression for every 40 trials
+    for i = 1:40:length(trials)-39
+        stack_trials = trials(i:i+39);
+        stack_values = meanValues(i:i+39);
+        % Fit linear regression for each stack of 10 trials
+        mdl = fitlm(stack_trials', stack_values');
+        coef = mdl.Coefficients.Estimate;
+        xFit = [min(stack_trials), max(stack_trials)];
+        yFit = coef(1) + coef(2) * xFit;
+        plot(xFit, yFit, '-', 'Color', colors(e,:), 'LineWidth', 1); % Display as lines
+        % Store the slope for each stack of 10 trials
+        regressionSlopes(e,i) = coef(2);
+    end
+end
+
+% Enhance the plot
+xlabel('Trial Number');
+ylabel('Mean N170 Amplitude');
+title('Mean N170 Amplitude Across All Participants for Each Emotion with Multiple Regression Lines for each Block');
+
+% Display the slopes for each emotion
+for e = 1:numel(emotions)
+    emotion = emotions{e};
+    disp(['Mean slope for ', emotion, ': ', num2str(mean(regressionSlopes(e,:)))]);
+end
+
+% Create custom legend with matching colors
+%legend(legends, 'Location', 'NorthEastOutside'); legend('boxoff'); % Adjust the legend location
 hold off;
 
 
 
-%% Plot multiple regression lines (every 10 trials)
+%--------------------Extract data--------------------%
 
+clear
+% Load the data
+load('W:/Fmri_Forschung/Allerlei/JuliaS/GitHub/UnconsciousBias/scripts/eeg_analysis/N170results.mat');
+
+% Initialize variables
+emotions = {'Happy', 'Sad', 'Neutral'};
+participantNames = fieldnames(results); % Get all participant names
+
+% Prepare to store the data
+participantData = {};
+emotionData = {};
+meanN170Data = [];
+slopeData = [];
+
+% Process each participant
+for p = 1:numel(participantNames)
+    participant = participantNames{p};
+    % Process each emotion for the current participant
+    for e = 1:numel(emotions)
+        emotion = emotions{e};
+        % Check if the current participant and emotion have data
+        if isfield(results.(participant), emotion) && ~isempty(results.(participant).(emotion).data)
+            data = results.(participant).(emotion).data;
+            numTrials = size(data, 2); % Get the total number of trials
+            % Determine the approximate number of stacks
+            numStacks = ceil(numTrials / 40);
+            % Determine the size of each stack
+            stackSize = ceil(numTrials / numStacks);
+            % Initialize arrays to store mean N170 and slope for each stack
+            stackMeans = zeros(numStacks, 1);
+            stackSlopes = zeros(numStacks, 1);
+            % Iterate over each stack
+            for s = 1:numStacks
+                % Determine the start and end indices of the current stack
+                startIndex = (s - 1) * stackSize + 1;
+                endIndex = min(startIndex + stackSize - 1, numTrials);
+                % Extract the N170 data for the current stack
+                stackData = data(:, startIndex:endIndex);
+                % Calculate the mean N170 for the current stack
+                stackMeans(s) = mean(stackData, 'all');
+                % Calculate the slope for the current stack
+                trials = 1:numel(stackData);
+                mdl = fitlm(trials', stackData');
+                stackSlopes(s) = mdl.Coefficients.Estimate(2);
+            end
+            % Store the data in long format
+            participantData = [participantData; repmat({participant}, numStacks, 1)];
+            emotionData = [emotionData; repmat({emotion}, numStacks, 1)];
+            meanN170Data = [meanN170Data; stackMeans(:)];
+            slopeData = [slopeData; stackSlopes(:)];
+        end
+    end
+end
+
+% Create table
+T = table(participantData, emotionData, meanN170Data, slopeData, 'VariableNames', {'Participant', 'Emotion', 'MeanN170', 'Slope'});
+
+% Write to Excel
+filename = 'W:/Fmri_Forschung/Allerlei/JuliaS/GitHub/UnconsciousBias/data/N170_Slope_Data_perBlock.xlsx';
+writetable(T, filename);
+disp(['Data exported to ' filename]);
+
+
+%-------------------- Merge data with existing sheet--------------------%
+
+% Load the ERP dataset
+erp_data = readtable('W:/Fmri_Forschung/Allerlei/JuliaS/GitHub/UnconsciousBias/data/erp_N170_HC_and_MDD.xlsx');
+
+% Load the slope dataset
+slope_data = readtable('W:/Fmri_Forschung/Allerlei/JuliaS/GitHub/UnconsciousBias/data/N170_Slope_Data_perBlock.xlsx');
+
+
+% Normalize the 'subName' column in the ERP data
+erp_data.subName = strrep(erp_data.subName, '-', '');
+
+% Normalize the 'emotion' column in the ERP data
+erp_data.emotion = cellfun(@(x) [upper(x(1)), lower(x(2:end))], erp_data.emotion, 'UniformOutput', false);
+
+% Normalize the 'Participant' column in the slope data
+slope_data.Participant = cellfun(@(x) strrep(x, '-', ''), slope_data.Participant, 'UniformOutput', false);
+
+% Normalize the 'Emotion' column in the slope data
+slope_data.Emotion = cellfun(@(x) [upper(x(1)), lower(x(2:end))], slope_data.Emotion, 'UniformOutput', false);
+
+% Make the column names consistent
+slope_data.Properties.VariableNames{'Participant'} = 'subName';
+slope_data.Properties.VariableNames{'Emotion'} = 'emotion';
+
+% Merge the datasets
+merged_data = outerjoin(erp_data, slope_data, 'Keys', {'subName', 'emotion'}, 'MergeKeys', true, 'Type', 'inner');
+
+% Save the merged dataset to a new Excel file
+writetable(merged_data, 'W:/Fmri_Forschung/Allerlei/JuliaS/GitHub/UnconsciousBias/data/merged_N170_datasets_perBlock.xlsx');
+
+
+
+%% Calculate slope per 10 trials per emotion
+
+%--------------------Plot multiple regression lines--------------------%
 % Load the data
 load('W:/Fmri_Forschung/Allerlei/JuliaS/GitHub/UnconsciousBias/scripts/eeg_analysis/N170results.mat');
 
@@ -288,8 +482,9 @@ end
 %legend(legends, 'Location', 'NorthEastOutside'); legend('boxoff'); % Adjust the legend location
 hold off;
 
-%% Extract data
+%--------------------Extract data--------------------%
 
+clear
 % Load the data
 load('W:/Fmri_Forschung/Allerlei/JuliaS/GitHub/UnconsciousBias/scripts/eeg_analysis/N170results.mat');
 
@@ -352,13 +547,13 @@ writetable(T, filename);
 disp(['Data exported to ' filename]);
 
 
-%% Merge data with existing sheet
+%-------------------- Merge data with existing sheet--------------------%
 
 % Load the ERP dataset
 erp_data = readtable('W:/Fmri_Forschung/Allerlei/JuliaS/GitHub/UnconsciousBias/data/erp_N170_HC_and_MDD.xlsx');
 
 % Load the slope dataset
-slope_data = readtable('W:/Fmri_Forschung/Allerlei/JuliaS/GitHub/UnconsciousBias/data/N170_Slope_Data_VariableStacks.xlsx');
+slope_data = readtable('W:/Fmri_Forschung/Allerlei/JuliaS/GitHub/UnconsciousBias/data/N170_Slope_Data_10Stacks.xlsx');
 
 
 % Normalize the 'subName' column in the ERP data
@@ -381,7 +576,7 @@ slope_data.Properties.VariableNames{'Emotion'} = 'emotion';
 merged_data = outerjoin(erp_data, slope_data, 'Keys', {'subName', 'emotion'}, 'MergeKeys', true, 'Type', 'inner');
 
 % Save the merged dataset to a new Excel file
-writetable(merged_data, 'W:/Fmri_Forschung/Allerlei/JuliaS/GitHub/UnconsciousBias/data/merged_N170_datasets_matlab.xlsx');
+writetable(merged_data, 'W:/Fmri_Forschung/Allerlei/JuliaS/GitHub/UnconsciousBias/data/merged_N170_datasets_10stacks.xlsx');
 
 
 
@@ -392,21 +587,10 @@ writetable(merged_data, 'W:/Fmri_Forschung/Allerlei/JuliaS/GitHub/UnconsciousBia
 
 
 
-%% Test
-
-% Display the structure of the 'results' matrix
-disp(fieldnames(results));  % This will show the top-level fields (participant identifiers)
-
-% Assuming 'participant1' is a valid field, adjust as necessary
-disp(fieldnames(results.sub004));  % This will show the fields for a specific participant
-
-% Display an example of stored data for a specific emotion under a participant
-if isfield(results.sub004, 'happy')
-    disp(results.sub004.happy)
-end
 
 
-% %%
+%% Aggregated N170 values
+
 % participants = subjects(idx);   
 % 
 % % Initialize data structures
