@@ -29,7 +29,7 @@ library(afex)         # plot effects
 Gender: 2=men, 1=women
 
 ```{r}
-data <- read_excel("C:/Users/juhoffmann/Desktop/Git/UnconsciousBias/data/erp_N170_HC_and_MDD.xlsx")
+data <- read_excel("W:/Fmri_Forschung/Allerlei/JuliaS/GitHub/UnconsciousBias/data/merged_N170_datasets_perBlock.xlsx")
 head(data)
 ```
 
@@ -81,6 +81,7 @@ time -\> primer consciousness
 
 ```{r}
 Model <- lmer(N170 ~ consciousness*primer_emotion*group 
+              + group*primer_emotion*Slope
               + gender 
               + age
               + (1|name),
@@ -107,6 +108,7 @@ eff.primer        <- emmeans(Model, pairwise ~ primer_emotion,adjust ="bonferron
 eff.gender        <- emmeans(Model, pairwise ~ gender)
 eff.consciousness <- emmeans(Model, pairwise ~ consciousness)
 eff.age           <- cor.test(data$N170,data$age, method="spearman")
+eff.group_consc   <- emmeans(Model, pairwise ~ consciousness:group,adjust ="bonferroni")
 ```
 
 ```{r}
@@ -114,6 +116,7 @@ eff.consciousness
 eff.primer
 eff.gender 
 eff.age 
+eff.group_consc
 ```
 
 ## plot effects
