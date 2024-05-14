@@ -65,7 +65,7 @@ setSize = 10; % Trials per set
 results = struct;
 
 % Loop through each participant
-for i = 1:length(participants)
+for i = 1:1%length(participants)
     FileName = participants(i).name;
     filePath = fullfile(DataPath, FileName);
     EEG = pop_loadbva(filePath);
@@ -122,6 +122,8 @@ for i = 1:length(participants)
         results.(participant).(emotionKey).setSlopes = setSlopes;
     end
 end
+
+
 
 
 %% Plot multiple regression lines 
@@ -815,3 +817,159 @@ writetable(merged_data, 'W:/Fmri_Forschung/Allerlei/JuliaS/GitHub/UnconsciousBia
 % 
 % 
 % 
+
+
+
+
+%% Test
+% Initialize data structures
+conditions = {'h_h_strong', 'h_h_weak', 'h_n_strong', 'h_n_weak', 'h_s_strong', 'h_s_weak', ...
+              'n_h_strong', 'n_h_weak', 'n_n_strong', 'n_n_weak', 'n_s_strong', 'n_s_weak', ...
+              's_h_strong', 's_h_weak', 's_n_strong', 's_n_weak', 's_s_strong', 's_s_weak'};
+emotionCategories = {'h', 'n', 's'};
+emotionLabels = {'Happy', 'Neutral', 'Sad'};
+
+
+% Initialize results structure
+results2 = struct;
+
+% Loop through each participant
+for i = 1:length(participants)
+    FileName = participants(i).name;
+    filePath = fullfile(DataPath, FileName);
+    EEG = pop_loadbva(filePath);
+    participant = strcat('sub', FileName(5:7));
+    results2.(participant) = struct;
+
+    % Epoch extraction and baseline correction
+    EEG = pop_epoch(EEG, conditions, [-0.2 0.8], 'epochinfo', 'yes');
+    EEG = pop_rmbase(EEG, [-200 0]);
+
+    % Channels and time window for N170
+    chanIndices = find(ismember({EEG.chanlocs.labels}, {'P7', 'P8', 'PO7', 'PO8'}));
+    timeWindow = [150, 200];
+    timeIndices = find(EEG.times >= timeWindow(1) & EEG.times <= timeWindow(2));
+
+    % Process each condition
+    for emotion = 1:length(emotionLabels)
+        emotionKey = emotionLabels{emotion};
+        emotionData = [];
+        trialNumbers = [];
+
+        % Collect data for the emotion
+        for condition = conditions(startsWith(conditions, emotionCategories{emotion}))
+            Epoch = extractfield(EEG.event, 'epoch');
+            Type = extractfield(EEG.event, 'type');
+            conditionTrials = find(strcmp(Type, condition));
+            conditionEpochs = Epoch(conditionTrials);
+
+            for t = conditionEpochs
+                minAmplitude = min(mean(EEG.data(chanIndices, timeIndices, t), 1));
+                emotionData = [emotionData, minAmplitude];
+                trialNumbers = [trialNumbers, t];  % Store the trial number
+            end
+        end
+        
+        % Store emotion-specific data
+        results2.(participant).(emotionKey).data = emotionData;
+        results2.(participant).(emotionKey).trialNumbers = trialNumbers;
+
+        % Additional statistical analysis here, if needed
+    end
+end
+
+%%
+%clear
+% Load the data
+%load('W:/Fmri_Forschung/Allerlei/JuliaS/GitHub/UnconsciousBias/scripts/eeg_analysis/N170results.mat');
+
+emotionSequence = {...
+'Sad', 'Happy', 'Sad', 'Neutral', 'Sad', 'Happy', 'Neutral', 'Sad', ...
+'Sad', 'Neutral', 'Happy', 'Neutral', 'Happy', 'Happy', 'Sad', 'Neutral', 'Neutral', 'Sad', ...
+'Happy', 'Sad', 'Neutral', 'Happy', 'Neutral', 'Happy', 'Sad', 'Happy', 'Sad', 'Sad', ...
+'Happy', 'Sad', 'Happy', 'Happy', 'Neutral', 'Happy', 'Happy', 'Neutral', 'Happy', 'Happy', ...
+'Happy', 'Happy', 'Neutral', 'Sad', 'Neutral', 'Sad', 'Neutral', 'Sad', 'Neutral', 'Sad', ...
+'Neutral', 'Sad', 'Sad', 'Happy', 'Sad', 'Neutral', 'Happy', 'Sad', 'Sad', 'Sad', ...
+'Neutral', 'Neutral', 'Neutral', 'Sad', 'Neutral', 'Sad', 'Neutral', 'Neutral', 'Sad', 'Happy', ...
+'Happy', 'Happy', 'Sad', 'Happy', 'Neutral', 'Sad', 'Neutral', 'Happy', 'Happy', 'Sad', ...
+'Happy', 'Happy', 'Sad', 'Sad', 'Neutral', 'Happy', 'Neutral', 'Happy', 'Happy', 'Sad', ...
+'Happy', 'Neutral', 'Happy', 'Happy', 'Neutral', 'Happy', 'Neutral', 'Sad', 'Happy', 'Neutral', ...
+'Happy', 'Happy', 'Sad', 'Neutral', 'Happy', 'Happy', 'Sad', 'Sad', 'Sad', 'Neutral', ...
+'Neutral', 'Sad', 'Neutral', 'Sad', 'Neutral', 'Happy', 'Neutral', 'Neutral', 'Sad', 'Neutral', ...
+'Sad', 'Sad', 'Sad', 'Sad', 'Sad', 'Sad', 'Happy', 'Sad', 'Sad', 'Sad', ...
+'Neutral', 'Sad', 'Happy', 'Happy', 'Neutral', 'Sad', 'Happy', 'Neutral', 'Happy', 'Sad', ...
+'Neutral', 'Neutral', 'Neutral', 'Neutral', 'Happy', 'Neutral', 'Happy', 'Sad', 'Happy', 'Neutral', ...
+'Neutral', 'Neutral', 'Happy', 'Sad', 'Sad', 'Happy', 'Neutral', 'Happy', 'Happy', 'Sad', ...
+'Happy', 'Neutral', 'Sad', 'Happy', 'Happy', 'Happy', 'Happy', 'Sad', 'Happy', 'Neutral', ...
+'Happy', 'Sad', 'Happy', 'Sad', 'Sad', 'Neutral', 'Happy', 'Neutral', 'Neutral', 'Happy', ...
+'Happy', 'Sad', 'Happy', 'Neutral', 'Sad', 'Neutral', 'Happy', 'Neutral', 'Happy', 'Happy', ...
+'Happy', 'Neutral', 'Happy', 'Sad', 'Neutral', 'Sad', 'Happy', 'Sad', 'Neutral', 'Sad', ...
+'Neutral', 'Neutral', 'Happy', 'Neutral', 'Happy', 'Sad', 'Neutral', 'Happy', 'Neutral', 'Sad', ...
+'Sad', 'Happy', 'Sad', 'Sad', 'Neutral', 'Neutral', 'Happy', 'Neutral', 'Sad', 'Sad', ...
+'Sad', 'Sad', 'Neutral', 'Neutral', 'Happy', 'Neutral', 'Happy', 'Neutral', 'Sad', 'Neutral', ...
+'Neutral', 'Neutral', 'Happy', 'Sad', 'Happy', 'Neutral', 'Happy', 'Neutral', 'Happy', 'Happy', ...
+'Neutral', 'Happy', 'Neutral', 'Sad', 'Neutral', 'Happy', 'Happy', 'Neutral', 'Happy', 'Neutral', ...
+'Neutral', 'Happy', 'Sad', 'Sad', 'Neutral', 'Sad', 'Sad', 'Happy', 'Sad', 'Sad', ...
+'Neutral', 'Sad', 'Neutral', 'Neutral', 'Sad', 'Neutral', 'Sad', 'Sad', 'Neutral', 'Sad', ...
+'Happy', 'Sad', 'Neutral', 'Happy', 'Neutral', 'Sad', 'Happy', 'Sad', 'Happy', 'Happy', ...
+'Neutral', 'Happy', 'Sad', 'Neutral', 'Happy', 'Neutral', 'Sad', 'Happy', 'Neutral', 'Sad', ...
+'Happy', 'Happy', 'Happy', 'Neutral', 'Neutral', 'Happy', 'Happy', 'Neutral', 'Neutral', 'Happy', ...
+'Happy', 'Sad', 'Happy', 'Sad', 'Sad', 'Sad', 'Happy', 'Sad', 'Neutral', 'Neutral', ...
+'Neutral', 'Sad', 'Sad', 'Neutral', 'Neutral', 'Sad', 'Neutral', 'Happy', 'Sad', 'Happy', ...
+'Happy', 'Happy', 'Sad', 'Sad', 'Sad', 'Sad', 'Happy', 'Neutral', 'Sad', 'Sad', ...
+'Neutral', 'Sad', 'Neutral', 'Neutral', 'Happy', 'Neutral', 'Neutral', 'Happy', 'Sad', ...
+'Sad', 'Happy', 'Happy', 'Happy', 'Neutral', 'Sad', 'Sad', 'Happy', 'Sad', 'Sad', ...
+'Happy', 'Neutral', 'Sad', 'Neutral', 'Neutral', 'Neutral', 'Neutral', 'Neutral', 'Happy', ...
+'Happy', 'Neutral', 'Sad', 'Sad'};
+
+
+participants = fieldnames(results2); % Get all participant names
+
+% Initialize matrices to hold the N170 data for each trial for each emotion
+happyData = NaN(360, length(participants));
+sadData = NaN(360, length(participants));
+neutralData = NaN(360, length(participants));
+
+% Define custom colors for plotting
+colors = [0.4660 0.6740 0.1880;  % Green for happy
+          0.9290 0.6940 0.1250;  % Yellow for sad
+          0.3010 0.7450 0.9330]; % Blue for neutral
+
+% Loop through each participant
+for i = 1:length(participants)
+    participant = participants{i};
+    
+    for emotionIndex = 1:3
+        emotion = emotionLabels{emotionIndex};
+        if isfield(results2.(participant), emotion)
+            for dataPoint = results2.(participant).(emotion).data
+                trialNum = dataPoint.trial;  % Extract trial number
+                switch emotion
+                    case 'Happy'
+                        happyData(trialNum, i) = dataPoint.amplitude;
+                    case 'Sad'
+                        sadData(trialNum, i) = dataPoint.amplitude;
+                    case 'Neutral'
+                        neutralData(trialNum, i) = dataPoint.amplitude;
+                end
+            end
+        end
+    end
+end
+
+
+
+
+% Calculate and plot means
+means = {nanmean(happyData, 2), nanmean(sadData, 2), nanmean(neutralData, 2)};
+figure; hold on;
+for idx = 1:3
+    plot(means{idx}, 'Color', colors(idx,:), 'LineWidth', 2);
+end
+
+xlabel('Trial Number');
+ylabel('Mean N170 Amplitude');
+title('Mean N170 Values Per Trial for Each Emotion');
+legend('Happy', 'Sad', 'Neutral');
+hold off;
+
