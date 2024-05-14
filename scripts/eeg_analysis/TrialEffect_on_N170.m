@@ -51,7 +51,8 @@ participants = subjects(idx);
 
 % Initialize a structure to hold the aggregated N170 amplitudes and trial numbers
 results = struct;
-
+aggregatedN170Amplitudes =[];
+aggregatedTrialNumbers =[];
 % Define the conditions
 conditions = {'h_h_strong' 'h_h_weak' 'h_n_strong' 'h_n_weak' 'h_s_strong' 'h_s_weak' ...
               'n_h_strong' 'n_h_weak' 'n_n_strong' 'n_n_weak' 'n_s_strong' 'n_s_weak' ...
@@ -96,7 +97,8 @@ for i = 1:length(participants)
 
         % Calculate mean amplitude for each of these trials
         for t = conditionEpochs
-            n170Amplitude = mean(mean(EEG.data(chanIndices, timeIndices, t), 2), 1);
+            mean_erp_range = mean(mean(EEG.data(chanIndices,timeIndices,t),3),1);
+            n170Amplitude = min(mean_erp_range);
             n170Amplitudes = [n170Amplitudes, n170Amplitude];
         end
     end
@@ -158,16 +160,16 @@ slopeTable = table(participantIDs, slopes, 'VariableNames', {'ParticipantID', 'S
 disp(slopeTable);
 
 % Optionally, save the table to a file
-writetable(slopeTable, 'C:/Users/juhoffmann/Desktop/Git/UnconsciousBias/data/N170_ParticipantSlopes.csv');
+writetable(slopeTable, 'W:/Fmri_Forschung/Allerlei/JuliaS/GitHub/UnconsciousBias/data/N170_ParticipantSlopes.csv');
 
 %% combine individual slope with existing datasheet
 
 % Step 1: Read the existing dataset
-existingDatasetPath = 'C:/Users/juhoffmann/Desktop/Git/UnconsciousBias/data/erp_N170_HC_and_MDD.xlsx';
+existingDatasetPath = 'W:/Fmri_Forschung/Allerlei/JuliaS/GitHub/UnconsciousBias/data/erp_N170_HC_and_MDD.xlsx';
 existingDataset = readtable(existingDatasetPath);
 
 % Step 2: Read the slopes data
-slopeDatasetPath = 'C:/Users/juhoffmann/Desktop/Git/UnconsciousBias/data/N170_ParticipantSlopes.csv';
+slopeDatasetPath = 'W:/Fmri_Forschung/Allerlei/JuliaS/GitHub/UnconsciousBias/data/N170_ParticipantSlopes.csv';
 slopeDataset = readtable(slopeDatasetPath);
 
 % Adjust participant IDs in the slope dataset to match the existing dataset format if necessary
@@ -192,5 +194,5 @@ for i = 1:height(slopeDataset)
 end
 
 % Step 5: Save the updated dataset back to an Excel file
-updatedDatasetPath = 'C:/Users/juhoffmann/Desktop/Git/UnconsciousBias/data/updated_erp_N170_HC_and_MDD.xlsx';
+updatedDatasetPath = 'W:/Fmri_Forschung/Allerlei/JuliaS/GitHub/UnconsciousBias/data/updated_erp_N170_HC_and_MDD.xlsx';
 writetable(existingDataset, updatedDatasetPath);
