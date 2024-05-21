@@ -607,7 +607,7 @@ Model8.a.3 <- lmer(N170 ~ consciousness*primer_emotion*group
                           data=data)
 ```
 ```{r}
-anova<-anova(Model8.a.3, type = 3, ddf= "Satterthwaite")
+anova<-anova(Model8.a.3, type = 3, ddf= "Kenward-Roger")
 print(anova)
 ```
 
