@@ -25,6 +25,7 @@ A modified backward mask priming task was conducted utilizing simultaneous EEG-f
 #### OSF 
 
 [osf.io/mscz5](https://osf.io/37xd2)
+https://doi.org/10.17605/OSF.IO/37XD2
 
 #### License
 
