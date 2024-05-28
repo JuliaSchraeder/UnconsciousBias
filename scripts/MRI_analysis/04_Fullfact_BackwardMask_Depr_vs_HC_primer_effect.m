@@ -97,55 +97,55 @@ matlabbatch{1}.spm.stats.factorial_design.des.fd.icell(4).levels = [1
                                                                     1];
 matlabbatch{1}.spm.stats.factorial_design.des.fd.icell(4).scans = HC_happy_conscious;
 
-matlabbatch{1}.spm.stats.factorial_design.des.fd.icell(2).levels = [2
+matlabbatch{1}.spm.stats.factorial_design.des.fd.icell(5).levels = [2
                                                                     1
                                                                     1];
-matlabbatch{1}.spm.stats.factorial_design.des.fd.icell(2).scans = HC_sad_conscious;
+matlabbatch{1}.spm.stats.factorial_design.des.fd.icell(5).scans = HC_sad_conscious;
 
 
-matlabbatch{1}.spm.stats.factorial_design.des.fd.icell(3).levels = [3
+matlabbatch{1}.spm.stats.factorial_design.des.fd.icell(6).levels = [3
                                                                     1
                                                                     1];
-matlabbatch{1}.spm.stats.factorial_design.des.fd.icell(3).scans = HC_neutral_conscious;
+matlabbatch{1}.spm.stats.factorial_design.des.fd.icell(6).scans = HC_neutral_conscious;
 
 
 
 %% MDD %%
 
 % Unconscious
-matlabbatch{1}.spm.stats.factorial_design.des.fd.icell(1).levels = [1
+matlabbatch{1}.spm.stats.factorial_design.des.fd.icell(7).levels = [1
                                                                     2
                                                                     2];
-matlabbatch{1}.spm.stats.factorial_design.des.fd.icell(1).scans = MDD_happy_unconscious;
+matlabbatch{1}.spm.stats.factorial_design.des.fd.icell(7).scans = MDD_happy_unconscious;
 
 
-matlabbatch{1}.spm.stats.factorial_design.des.fd.icell(2).levels = [2
+matlabbatch{1}.spm.stats.factorial_design.des.fd.icell(8).levels = [2
                                                                     2
                                                                     2];
-matlabbatch{1}.spm.stats.factorial_design.des.fd.icell(2).scans = MDD_sad_unconscious;
+matlabbatch{1}.spm.stats.factorial_design.des.fd.icell(8).scans = MDD_sad_unconscious;
 
 
-matlabbatch{1}.spm.stats.factorial_design.des.fd.icell(3).levels = [3
+matlabbatch{1}.spm.stats.factorial_design.des.fd.icell(9).levels = [3
                                                                     2
                                                                     2];
-matlabbatch{1}.spm.stats.factorial_design.des.fd.icell(3).scans = MDD_neutral_unconscious;
+matlabbatch{1}.spm.stats.factorial_design.des.fd.icell(9).scans = MDD_neutral_unconscious;
 
 % Conscious
-matlabbatch{1}.spm.stats.factorial_design.des.fd.icell(4).levels = [1
+matlabbatch{1}.spm.stats.factorial_design.des.fd.icell(10).levels = [1
                                                                     1
                                                                     2];
-matlabbatch{1}.spm.stats.factorial_design.des.fd.icell(4).scans = MDD_happy_conscious;
+matlabbatch{1}.spm.stats.factorial_design.des.fd.icell(10).scans = MDD_happy_conscious;
 
-matlabbatch{1}.spm.stats.factorial_design.des.fd.icell(2).levels = [2
+matlabbatch{1}.spm.stats.factorial_design.des.fd.icell(11).levels = [2
                                                                     1
                                                                     2];
-matlabbatch{1}.spm.stats.factorial_design.des.fd.icell(2).scans = MDD_sad_conscious;
+matlabbatch{1}.spm.stats.factorial_design.des.fd.icell(11).scans = MDD_sad_conscious;
 
 
-matlabbatch{1}.spm.stats.factorial_design.des.fd.icell(3).levels = [3
+matlabbatch{1}.spm.stats.factorial_design.des.fd.icell(12).levels = [3
                                                                     1
                                                                     2];
-matlabbatch{1}.spm.stats.factorial_design.des.fd.icell(3).scans = MDD_neutral_conscious;
+matlabbatch{1}.spm.stats.factorial_design.des.fd.icell(12).scans = MDD_neutral_conscious;
 
 
 %%
