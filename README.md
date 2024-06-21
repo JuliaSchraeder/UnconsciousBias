@@ -1,7 +1,7 @@
 # Unconscious Bias in Major Depressive Disorder: EEG-fMRI Study
 
 #### AUTHORS
-Julia Schräder 1,2, Lennard Herzberg 1, Han-Gue Jo 3, Lucia Hernandez-Pena 1,2, Julia Koch 1,2,, Ute Habel 1,2, Lisa Wagels 1,2
+Julia Schräder 1,2, Lennard Herzberg 1, Han-Gue Jo 3, Lucia Hernandez-Pena 1,2, Julia Koch 1,2, Ute Habel 1,2, Lisa Wagels 1,2
 
 * <sub><sup>1 Department of Psychiatry, Psychotherapy and Psychosomatics, Medical Faculty, Uniklinik RWTH Aa-chen University, Pauwelstraße 30, 52074 Aachen, Germany</sup></sub>
 * <sub><sup>2 Institute of Neuroscience and Medicine: JARA-Institute Brain Structure Function Relationship (INM 10), Research Center Jülich, Jülich, Germany</sup></sub>
