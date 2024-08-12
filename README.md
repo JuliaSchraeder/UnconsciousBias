@@ -1,7 +1,7 @@
 # Unconscious Bias in Major Depressive Disorder: EEG-fMRI Study
 
 #### AUTHORS
-Julia Schräder 1,2, Lennard Herzberg 1, Han-Gue Jo 3, Lucia Hernandez-Pena 1,2, Julia Koch 1,2,, Ute Habel 1,2, Lisa Wagels 1,2
+Julia Schräder 1,2, Lennard Herzberg 1, Han-Gue Jo 3, Lucia Hernandez-Pena 1,2, Julia Koch 1,2, Ute Habel 1,2, Lisa Wagels 1,2
 
 * <sub><sup>1 Department of Psychiatry, Psychotherapy and Psychosomatics, Medical Faculty, Uniklinik RWTH Aa-chen University, Pauwelstraße 30, 52074 Aachen, Germany</sup></sub>
 * <sub><sup>2 Institute of Neuroscience and Medicine: JARA-Institute Brain Structure Function Relationship (INM 10), Research Center Jülich, Jülich, Germany</sup></sub>
@@ -16,11 +16,9 @@ Julia Schräder 1,2, Lennard Herzberg 1, Han-Gue Jo 3, Lucia Hernandez-Pena 1,2,
 * [Technologies](#technologies)
 * [Acknowledgement](#acknowledgement)
 
-
 ## General info
 This study is about the perception of emotional stimuli presented at an unconscious level in a sample of 66 healthy individuals and patients 60 with major depressive disorder. To examine the neurophysiological pathway of biased unconscious emotion processing in depression, simultaneous EEG-fMRI measures are applied focusing on the event-related potential for facial expressions (N170) for predicting the presence of unconscious cognitive biases in depressed individuals.
 A modified backward mask priming task was conducted utilizing simultaneous EEG-fRMI measurement involving presentation of facial expressions (happy, sad, neutral). Priming prior to a target emotion created distinct emotional trials: unconscious (16.7 ms primer duration) and conscious (150 ms primer duration) with either congruency or incongruency of emotions between primer and target. 
-
 
 #### OSF 
 
