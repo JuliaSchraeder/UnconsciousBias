@@ -195,12 +195,14 @@ results <- lapply(variables, function(var) {
   
   cohens_d_value <- cohens_d(group1, group2)
   se <- calculate_se(group1, group2)
+  df <- t_test_result$parameter
   
   data.frame(
     Variable = var,
     P_Value = t_test_result$p.value,
-#    T_Value = unname(t_test_result$statistic),
-#    Cohens_D = cohens_d_value,
+    T_Value = unname(t_test_result$statistic),
+    df = df,
+    Cohens_D = cohens_d_value,
     SE = se
   )
 }) %>% bind_rows()
