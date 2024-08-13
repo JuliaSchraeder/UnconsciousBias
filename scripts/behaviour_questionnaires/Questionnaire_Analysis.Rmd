@@ -215,7 +215,7 @@ results <- results %>%
 # Display the results
 print(results)
 #/Users/julia/Desktop/Git/EEGfMRIStudy/UnconsciousBias/data/
-write.csv(results, "C:/Users/juhoffmann/Desktop/Git/UnconsciousBias/data/Group_Comparison_Questionnaires.csv", row.names = FALSE)
+write.csv(results, "W:/Fmri_Forschung/Allerlei/JuliaS/GitHub/UnconsciousBias/data/Group_Comparison_Questionnaires.csv", row.names = FALSE)
 ```
 
 # Plot data
@@ -285,15 +285,9 @@ ggplot(d_BDI, aes(x = Group_MDD1_HC2, y = BDI, fill = Group_MDD1_HC2)) +
 ```{r}
 # Perform t-test
 pairwise_results <- t.test(d_BDI$BDI ~ d_BDI$Group_MDD1_HC2, paired = FALSE)
-se <- summary(lm_result)$coefficients[2, "Std. Error"]
-
-# Print the t-test results, effect size, beta value, and standard error
-print("T-Test Results:")
 print(pairwise_results)
-print("\nStandard Error:")
-print(se)
-
 ```
+
 
 # Apply Bonferroni correction
 
