@@ -1,57 +1,98 @@
 # Unconscious Bias in Major Depressive Disorder: EEG-fMRI Study
 
-#### AUTHORS
-Julia Schräder 1,2, Lennard Herzberg 1, Han-Gue Jo 3, Lucia Hernandez-Pena 1,2, Julia Koch 1,2, Ute Habel 1,2, Lisa Wagels 1,2
+[![DOI](https://img.shields.io/badge/DOI-10.1016/j.bpsc.2024.07.005-blue)](https://doi.org/10.1016/j.bpsc.2024.07.005)
+[![License: CC BY 4.0](https://img.shields.io/badge/License-CC--BY--4.0-lightgrey.svg)](https://creativecommons.org/licenses/by/4.0/)
+[![Status: Open Access](https://img.shields.io/badge/Status-Open%20Access-brightgreen.svg)](https://doi.org/10.17605/OSF.IO/37XD2)
+
+---
+
+#### AUTHORS 
+Julia Schräder 1,2, Lennard Herzberg 1, Han-Gue Jo 3, Lucia Hernandez-Pena 1,2, Julia Koch 1,2, Ute Habel 1,2, Lisa Wagels 1,2 
 
 * <sub><sup>1 Department of Psychiatry, Psychotherapy and Psychosomatics, Medical Faculty, Uniklinik RWTH Aa-chen University, Pauwelstraße 30, 52074 Aachen, Germany</sup></sub>
-* <sub><sup>2 Institute of Neuroscience and Medicine: JARA-Institute Brain Structure Function Relationship (INM 10), Research Center Jülich, Jülich, Germany</sup></sub>
-* <sub><sup>3 School of Computer SoftwareInformation and Communication Engineering, Kunsan National University, 588 Daehak-ro Gunsan, South Korea</sup></sub>
+*  <sub><sup>2 Institute of Neuroscience and Medicine: JARA-Institute Brain Structure Function Relationship (INM 10), Research Center Jülich, Jülich, Germany</sup></sub>
+*  <sub><sup>3 School of Computer SoftwareInformation and Communication Engineering, Kunsan National University, 588 Daehak-ro Gunsan, South Korea</sup></sub>
 
-## Table of contents
-* [General info](#general-info)
-	* [Publication](#OSF) 
-	* [License](#license)
-* [Experimental design](#experimental-design)
-* [Folder descripion](#folder-description)
-* [Technologies](#technologies)
-* [Acknowledgement](#acknowledgement)
+---
 
-## General info
-This study is about the perception of emotional stimuli presented at an unconscious level in a sample of 66 healthy individuals and patients 60 with major depressive disorder. To examine the neurophysiological pathway of biased unconscious emotion processing in depression, simultaneous EEG-fMRI measures are applied focusing on the event-related potential for facial expressions (N170) for predicting the presence of unconscious cognitive biases in depressed individuals.
-A modified backward mask priming task was conducted utilizing simultaneous EEG-fRMI measurement involving presentation of facial expressions (happy, sad, neutral). Priming prior to a target emotion created distinct emotional trials: unconscious (16.7 ms primer duration) and conscious (150 ms primer duration) with either congruency or incongruency of emotions between primer and target. 
+## General Information
 
-#### OSF 
+This study investigates the perception of emotional stimuli presented at an unconscious level in a sample of 66 healthy individuals and 60 patients with major depressive disorder (MDD).  
 
-[osf.io/mscz5](https://osf.io/37xd2)
-https://doi.org/10.17605/OSF.IO/37XD2
+To examine the neurophysiological pathways of biased unconscious emotion processing in depression, we applied **simultaneous EEG-fMRI** recordings, focusing on the event-related potential for facial expressions (*N170*) to predict the presence of unconscious cognitive biases in depressed individuals.  
 
-#### License
+A **modified backward mask priming task** was used, presenting facial expressions (happy, sad, neutral) under both unconscious (16.7 ms) and conscious (150 ms) prime durations, with congruent or incongruent target emotions.  
 
-CC-By Attribution 4.0 International 
+---
+## ✨ Abstract
 
-## Experimental design
 
-The backward mask priming paradigm provided masked stimulus presentation of emotional and neutral stimuli. Images of 12 happy, 12 sad and 12 neutral facial expressions were presented. A total of 36 gender balanced images taken from the FACES database were used. Each image was presented 10 times against a grey background at the center of an LCD monitor (screen refresh rate = 120 Hz) using the PsychoPy 3 software.
+**Background:** Major depressive disorder (MDD) is characterized by strong emotional dysregulation. Mechanisms driving the negative affect in depression may be fast processes existing on an unconscious level.
+**Methods:** A priming task was conducted using simultaneous electroencephalography–functional magnetic resonance imaging measurement involving presentation of facial expressions (happy, sad, and neutral) to examine the neurophysiological pathway of biased unconscious emotion processing in MDD. Priming prior to a target emotion created unconscious (16.7-ms primer) and conscious (150-ms primer) trials. A large sample (N = 126) was recruited, containing healthy control participants (n = 66; 37 women) and participants with MDD (n = 60; 31 women).
+**Results:** The healthy control group showed a shorter reaction time in happy but not in sad or neutral trials compared with the MDD group. N170 amplitudes were lower in trials with unconscious than conscious primer presentation. N170 amplitudes correlated with cortical (right fusiform gyrus, right middle temporal gyrus, right inferior temporal gyrus, left supplementary motor area, right middle frontal gyrus) and subcortical brain regions (right amygdala). The strength of N170 and brain activity correlation increased when the stimulus was consciously presented. Presented emotions did not affect the correlation of N170 values and brain activity.
+**Conclusions:** Our findings show that MDD may exhibit biased emotion regulation abilities at a behavioral and neurophysiological level. Face-sensitive event-related potentials demonstrate a correlation with heightened brain activity in regions associated with both face recognition (fusiform gyrus) and emotion processing (amygdala). These findings are evident in both MDD and healthy control groups, with lower effect sizes in the MDD group indicating reduced emotion recognition and processing abilities.
 
-Every trial started with a fixation cross presented for 300 ms (36 frames). Afterwards, a prime stimulus appeared either strongly masked (with a presentation time of 16.7 ms followed by a mask for 66.7 ms) or weakly masked (with a primer for 150 ms followed by a mask for 66.7 ms). Participants were asked to rate the emotional expression of the target image via a button box using the index finger to respond “sad”, the middle finger to respond “neutral”, or the ring finger to respond “happy”. Participants had a response phase of 1.5 s. 
+---
 
-Using either images of the same (no-conflict) or different (conflict) emotional expression (happy, sad, neutral) as primer / target, this modified backward-masked priming task ensured two distinct unconscious (16.7 ms) and conscious (150 ms) emotional conflict trials as well as non-conflict trials to test the effect of unconscious emotional information on cognitive processing.
+## Repository Contents
 
-![Task](https://github.com/JuliaSchraeder/UnconsciousBias/assets/54576554/270e406b-83e8-4430-ac6d-9df84326ba85)
+- `data/` – datasets for GLMM calculation, questionnaire results, and mean reaction time data  
+- `scripts/` – analysis scripts and datasets for GLMM, EEG, fMRI, and EEG-informed fMRI analysis  
 
-## Folder description
+---
 
-* `data` includes data used for GLMM calculation, questionnaire results and mean reaction time data. 
-* `scripts` includes script and dataset for GLMM, EEG, fMRI and eeg-informed fMRI anaylsis 
+## Experimental Design
 
-## Technologies
-Project is created with:
-* PsychoPy3 version v2020.2.4
-* RStudio version 2023.06.1
-* Python 3
-* GraphPad Prism 10.0.2.
-* Matlab version 2020b
-* EEGLAB version 2022.1
+The backward-masked priming paradigm included 36 gender-balanced images (12 happy, 12 sad, 12 neutral) from the **FACES database**. Each image was shown 10 times on a 120 Hz LCD monitor using **PsychoPy 3**.  
 
-## Acknowledgement
-This study was supported by the Brain Imaging Facility of the Interdisciplinary Center for Clinical Research within the Faculty of Medicine at the RWTH Aachen University and the International Research Training Group (IRTG2150). This study was funded by the Deutsche Forschungsgemeinschaft (DFG, German Research Foundation) 667892/JO 1453/2-1 and the International Research Training Group (IRTG2150) —269953372/GRK2150. This work was also supported by the FZJ-NST Bilateral Cooperation Program funded by the Forschungszentrum Jülich and the National Research Council of Science & Technology (Global-22-001). 
+- **Fixation cross**: 300 ms (36 frames)  
+- **Prime**:  
+  - Strongly masked: 16.7 ms prime + 66.7 ms mask  
+  - Weakly masked: 150 ms prime + 66.7 ms mask  
+- **Target**: emotional facial expression (happy, sad, neutral)  
+- **Response phase**: 1.5 s; participants responded via button box:  
+  - Index finger = sad  
+  - Middle finger = neutral  
+  - Ring finger = happy  
+
+This paradigm ensured distinct **unconscious** and **conscious** emotional conflict vs. non-conflict trials to test unconscious emotional processing effects.  
+
+
+
+
+---
+
+## Pre-Registration
+
+This project is openly available via OSF:  
+- OSF Project Page: [https://osf.io/37xd2](https://osf.io/37xd2)  
+- DOI: [10.17605/OSF.IO/37XD2](https://doi.org/10.17605/OSF.IO/37XD2)  
+
+---
+
+## Technologies Used
+
+- PsychoPy3 v2020.2.4  
+- RStudio v2023.06.1  
+- Python 3  
+- GraphPad Prism v10.0.2  
+- MATLAB R2020b  
+- EEGLAB v2022.1  
+
+---
+
+## Acknowledgements
+
+This study was supported by the **Brain Imaging Facility of the Interdisciplinary Center for Clinical Research**, Faculty of Medicine, RWTH Aachen University, and the **International Research Training Group (IRTG 2150)**.  
+
+Funding:  
+- Deutsche Forschungsgemeinschaft (DFG, German Research Foundation) — 667892 / JO 1453/2-1  
+- International Research Training Group (IRTG 2150) — 269953372 / GRK2150  
+- FZJ-NST Bilateral Cooperation Program funded by Forschungszentrum Jülich and the National Research Council of Science & Technology (Global-22-001)  
+
+---
+
+## 📜 License
+
+This work is distributed under the terms of the  
+[Creative Commons Attribution 4.0 International License (CC BY 4.0)](https://creativecommons.org/licenses/by/4.0/).  
