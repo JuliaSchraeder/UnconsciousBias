@@ -57,7 +57,7 @@ The backward-masked priming paradigm included 36 gender-balanced images (12 happ
 
 This paradigm ensured distinct **unconscious** and **conscious** emotional conflict vs. non-conflict trials to test unconscious emotional processing effects.  
 
-
+![Task Paradigm](main/BackwardMask.png)
 
 
 ---
