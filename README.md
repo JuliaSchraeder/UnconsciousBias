@@ -1,17 +1,21 @@
 # Unconscious Bias in Major Depressive Disorder: EEG-fMRI Study
 
-[![DOI](https://img.shields.io/badge/DOI-10.1016/j.bpsc.2024.07.005-blue)](https://doi.org/10.1016/j.bpsc.2024.07.005)
+[![OSF DOI](https://img.shields.io/badge/DOI-10.17605/OSF.IO/37XD2-blue)](https://doi.org/10.17605/OSF.IO/37XD2)
 [![License: CC BY 4.0](https://img.shields.io/badge/License-CC--BY--4.0-lightgrey.svg)](https://creativecommons.org/licenses/by/4.0/)
-[![Status: Open Access](https://img.shields.io/badge/Status-Open%20Access-brightgreen.svg)](https://doi.org/10.17605/OSF.IO/37XD2)
+[![Status: Open Access](https://img.shields.io/badge/Status-Open%20Access-brightgreen.svg)]([DOI_LINK_HERE](https://doi.org/10.1016/j.bpsc.2024.07.005)c)
 
+
+
+https://doi.org/10.1016/j.bpsc.2024.07.005
 ---
 
 #### AUTHORS 
-Julia Schräder 1,2, Lennard Herzberg 1, Han-Gue Jo 3, Lucia Hernandez-Pena 1,2, Julia Koch 1,2, Ute Habel 1,2, Lisa Wagels 1,2 
+*Julia Schräder <sup>1,2</sup>, Lennard Herzberg <sup>1</sup>, Han-Gue Jo <sup>3</sup>, Lucia Hernandez-Pena <sup>1,2</sup>, Julia Koch <sup>1,2</sup>, Ute Habel <sup>1,2</sup>, Lisa Wagels<sup>1,2</sup>*
 
-* <sub><sup>1 Department of Psychiatry, Psychotherapy and Psychosomatics, Medical Faculty, Uniklinik RWTH Aa-chen University, Pauwelstraße 30, 52074 Aachen, Germany</sup></sub>
-*  <sub><sup>2 Institute of Neuroscience and Medicine: JARA-Institute Brain Structure Function Relationship (INM 10), Research Center Jülich, Jülich, Germany</sup></sub>
-*  <sub><sup>3 School of Computer SoftwareInformation and Communication Engineering, Kunsan National University, 588 Daehak-ro Gunsan, South Korea</sup></sub>
+<sub><sup>
+1 Department of Psychiatry, Psychotherapy and Psychosomatics, Medical Faculty, Uniklinik RWTH Aa-chen University, Pauwelstraße 30, 52074 Aachen, Germany <br>
+2 Institute of Neuroscience and Medicine: JARA-Institute Brain Structure Function Relationship (INM 10), Research Center Jülich, Jülich, Germany <br>
+3 School of Computer SoftwareInformation and Communication Engineering, Kunsan National University, 588 Daehak-ro Gunsan, South Korea <br>
 
 ---
 
@@ -60,14 +64,6 @@ This paradigm ensured distinct **unconscious** and **conscious** emotional confl
 
 ---
 
-## Pre-Registration
-
-This project is openly available via OSF:  
-- OSF Project Page: [https://osf.io/37xd2](https://osf.io/37xd2)  
-- DOI: [10.17605/OSF.IO/37XD2](https://doi.org/10.17605/OSF.IO/37XD2)  
-
----
-
 ## Technologies Used
 
 - PsychoPy3 v2020.2.4  
@@ -94,3 +90,10 @@ Funding:
 
 This work is distributed under the terms of the  
 [Creative Commons Attribution 4.0 International License (CC BY 4.0)](https://creativecommons.org/licenses/by/4.0/).  
+
+---
+
+## 📑 Citation
+
+If you use or reference this repository, please cite:
+Schräder, J., Herzberg, L., Jo, H. G., Hernandez-Pena, L., Koch, J., Habel, U., & Wagels, L. (2024). Neurophysiological Pathways of Unconscious Emotion Processing in Depression: Insights From a Simultaneous Electroencephalography–Functional Magnetic Resonance Imaging Measurement. Biological Psychiatry: Cognitive Neuroscience and Neuroimaging, 9(11), 1121-1131.
